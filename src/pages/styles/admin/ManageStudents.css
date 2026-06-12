@@ -1,0 +1,163 @@
+/* ==================== MANAGE STUDENTS PAGE ==================== */
+
+.students-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  gap: 20px;
+}
+
+.students-search {
+  padding: 12px 20px;
+  border: 1.5px solid var(--border);
+  border-radius: 50px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  width: 400px;
+  transition: border 0.3s;
+  background-color: var(--white);
+}
+
+.students-search:focus {
+  border-color: var(--primary);
+}
+
+.students-count {
+  font-size: 14px;
+  color: var(--grey);
+  font-weight: 500;
+}
+
+.status-badge.blocked {
+  background-color: #fde8e8;
+  color: var(--error);
+}
+
+.btn-toggle {
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.btn-toggle.block {
+  background-color: #fde8e8;
+  color: var(--error);
+}
+
+.btn-toggle.block:hover {
+  background-color: #f5c6cb;
+}
+
+.btn-toggle.unblock {
+  background-color: #d8f3dc;
+  color: var(--primary);
+}
+
+.btn-toggle.unblock:hover {
+  background-color: #b7e4c7;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.student-modal {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 36px;
+  width: 100%;
+  max-width: 460px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.modal-close {
+  background: none;
+  font-size: 20px;
+  color: var(--grey);
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+}
+
+.modal-body {
+  text-align: center;
+}
+
+.modal-avatar {
+  font-size: 70px;
+  margin-bottom: 12px;
+}
+
+.modal-body h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.modal-email {
+  font-size: 14px;
+  color: var(--grey);
+  margin-bottom: 24px;
+}
+
+.modal-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 24px;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.modal-stat h4 {
+  font-size: 24px;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+
+.modal-stat p {
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.modal-info {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.modal-info p {
+  font-size: 14px;
+  color: var(--dark);
+}
