@@ -1,0 +1,86 @@
+/* ==================== MANAGE COURSES PAGE ==================== */
+
+.btn-add-course {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.btn-add-course:hover {
+  background-color: var(--primary-light);
+}
+
+.course-title-cell {
+  font-weight: 600;
+  color: var(--dark);
+}
+
+.category-badge {
+  background-color: #e8f4fd;
+  color: #0969da;
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.level-badge {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.level-badge.beginner {
+  background-color: #d8f3dc;
+  color: var(--primary);
+}
+
+.level-badge.intermediate {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.level-badge.advanced {
+  background-color: #fde8e8;
+  color: var(--error);
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-edit {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-edit:hover {
+  background-color: #ffeaa7;
+}
+
+.btn-delete {
+  background-color: #fde8e8;
+  color: var(--error);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.btn-delete:hover {
+  background-color: #f5c6cb;
+}
