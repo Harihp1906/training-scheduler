@@ -1,0 +1,198 @@
+/* ==================== EXAM INSTRUCTIONS PAGE ==================== */
+
+.instructions-page {
+  min-height: calc(100vh - 70px);
+  background-color: #eef0f5;
+  padding: 40px 20px;
+}
+
+.instructions-container {
+  max-width: 860px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Header */
+.instructions-header {
+  text-align: center;
+  background: linear-gradient(135deg, #2D6A4F, #52B788);
+  padding: 50px 40px;
+  border-radius: 20px;
+  color: var(--white);
+}
+
+.instructions-header h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.instructions-header p {
+  font-size: 16px;
+  color: #d8f3dc;
+}
+
+/* Section */
+.instructions-section {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 36px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+}
+
+.instructions-section h2 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+
+/* Rules Grid */
+.rules-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.rule-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+}
+
+.rule-icon {
+  font-size: 28px;
+  flex-shrink: 0;
+}
+
+.rule-card h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.rule-card p {
+  font-size: 13px;
+  color: var(--grey);
+  line-height: 1.6;
+}
+
+/* Proctoring */
+.proctoring-section {
+  border: 2px solid #ffeaa7;
+  background-color: #fffef5;
+}
+
+.proctoring-intro {
+  font-size: 15px;
+  color: var(--grey);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+.warning-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.warning-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px;
+  background-color: #fff9e6;
+  border-radius: 10px;
+  border-left: 4px solid #ffc107;
+}
+
+.warning-icon {
+  font-size: 22px;
+  flex-shrink: 0;
+}
+
+.warning-item h4 {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.warning-item p {
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.termination-notice {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background-color: #fde8e8;
+  border-radius: 10px;
+  padding: 16px 20px;
+  border-left: 4px solid var(--error);
+  font-size: 24px;
+}
+
+.termination-notice p {
+  font-size: 15px;
+  color: #842029;
+}
+
+/* Checklist */
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.check-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 16px;
+  background-color: #f0faf4;
+  border-radius: 10px;
+  font-size: 28px;
+}
+
+.check-item p {
+  font-size: 15px;
+  color: var(--dark);
+}
+
+/* Footer */
+.instructions-footer {
+  text-align: center;
+  padding: 10px 0 20px;
+}
+
+.instructions-footer p {
+  font-size: 13px;
+  color: var(--grey);
+  margin-bottom: 20px;
+}
+
+.btn-start-exam {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 16px 48px;
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+  box-shadow: 0 4px 20px rgba(45,106,79,0.3);
+}
+
+.btn-start-exam:hover {
+  background-color: var(--primary-light);
+}
