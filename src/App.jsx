@@ -1,35 +1,35 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Navbar from './components/common/Navbar';
-import Footer from './components/common/Footer';
+import Navbar from './components/common/Navbar.jsx';
+import Footer from './components/common/Footer.jsx';
 
 // Public Pages
-import Home from './pages/public/Home';
-import About from './pages/public/About';
-import Courses from './pages/public/Courses';
-import Contact from './pages/public/Contact';
-import Login from './pages/public/Login';
-import Register from './pages/public/Register';
+import Home from './pages/public/Home.jsx';
+import About from './pages/public/About.jsx';
+import Courses from './pages/public/Courses.jsx';
+import Contact from './pages/public/Contact.jsx';
+import Login from './pages/public/Login.jsx';
+import Register from './pages/public/Register.jsx';
 
 // Student Pages
-import Dashboard from './pages/student/Dashboard';
-import MyCourses from './pages/student/MyCourses';
-import CourseDetail from './pages/student/CourseDetail';
-import Quiz from './pages/student/Quiz';
-import Exam from './pages/student/Exam';
-import ExamInstructions from './pages/student/ExamInstructions';
-import ExamTerminated from './pages/student/ExamTerminated';
-import Certificate from './pages/student/Certificate';
-import Profile from './pages/student/Profile';
+import Dashboard from './pages/student/Dashboard.jsx';
+import MyCourses from './pages/student/MyCourses.jsx';
+import CourseDetail from './pages/student/CourseDetail.jsx';
+import Quiz from './pages/student/Quiz.jsx';
+import Exam from './pages/student/Exam.jsx';
+import ExamInstructions from './pages/student/ExamInstructions.jsx';
+import ExamTerminated from './pages/student/ExamTerminated.jsx';
+import Certificate from './pages/student/Certificate.jsx';
+import Profile from './pages/student/Profile.jsx';
 
 // Admin Pages
-import AdminDashboard from './pages/admin/AdminDashboard';
-import ManageCourses from './pages/admin/ManageCourses';
-import CreateCourse from './pages/admin/CreateCourse';
-import ManageStudents from './pages/admin/ManageStudents';
-import ManageQuizzes from './pages/admin/ManageQuizzes';
-import ManageCertificates from './pages/admin/ManageCertificates';
-import ManageBatches from './pages/admin/ManageBatches';
-import Reports from './pages/admin/Reports';
+import AdminDashboard from './pages/admin/AdminDashboard.jsx';
+import ManageCourses from './pages/admin/ManageCourses.jsx';
+import CreateCourse from './pages/admin/CreateCourse.jsx';
+import ManageStudents from './pages/admin/ManageStudents.jsx';
+import ManageQuizzes from './pages/admin/ManageQuizzes.jsx';
+import ManageCertificates from './pages/admin/ManageCertificates.jsx';
+import ManageBatches from './pages/admin/ManageBatches.jsx';
+import Reports from './pages/admin/Reports.jsx';
 
 function App() {
   return (
