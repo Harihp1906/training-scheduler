@@ -1,0 +1,168 @@
+/* ==================== EXAM PAGE ==================== */
+
+.exam-page {
+  min-height: calc(100vh - 70px);
+  background-color: #1a1a2e;
+  position: relative;
+}
+
+/* Warning Banner */
+.warning-banner {
+  position: fixed;
+  top: 70px;
+  left: 0;
+  right: 0;
+  background-color: #e63946;
+  color: var(--white);
+  padding: 14px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 600;
+  z-index: 999;
+  animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+.warning-count {
+  background-color: rgba(255,255,255,0.2);
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 14px;
+}
+
+/* Layout */
+.exam-layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 70px);
+}
+
+/* Camera Box */
+.camera-box {
+  background-color: #16213e;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.camera-feed {
+  width: 100%;
+  border-radius: 12px;
+  border: 3px solid #52B788;
+}
+
+.camera-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: #52B788;
+}
+
+.camera-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: #ccc;
+}
+
+.camera-dot.active {
+  background-color: #52B788;
+  box-shadow: 0 0 8px #52B788;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.warnings-display {
+  background-color: #0f3460;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.warnings-display h4 {
+  color: #fff;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.warning-dots {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.warn-dot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #333;
+  border: 2px solid #555;
+}
+
+.warn-dot.active {
+  background-color: #e63946;
+  border-color: #e63946;
+  box-shadow: 0 0 10px #e63946;
+}
+
+.warnings-display p {
+  font-size: 12px;
+  color: #aaa;
+}
+
+/* Exam Container */
+.exam-container {
+  background-color: #eef0f5;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.exam-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.exam-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.exam-meta {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-size: 14px;
+  color: var(--grey);
+}
+
+.exam-timer {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.exam-timer.urgent {
+  background-color: #fde8e8;
+  color: var(--error);
+  animation: pulse 0.5s infinite;
+}
