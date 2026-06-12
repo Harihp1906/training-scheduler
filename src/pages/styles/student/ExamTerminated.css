@@ -1,0 +1,144 @@
+/* ==================== EXAM TERMINATED PAGE ==================== */
+
+.terminated-page {
+  min-height: calc(100vh - 70px);
+  background-color: #eef0f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.terminated-container {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 50px 40px;
+  width: 100%;
+  max-width: 600px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+  text-align: center;
+}
+
+.terminated-icon {
+  font-size: 80px;
+  margin-bottom: 20px;
+}
+
+.terminated-container h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--error);
+  margin-bottom: 16px;
+}
+
+.terminated-reason {
+  font-size: 15px;
+  color: var(--grey);
+  line-height: 1.7;
+  margin-bottom: 32px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Warnings */
+.terminated-warnings {
+  background-color: #fde8e8;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 24px;
+  text-align: left;
+}
+
+.terminated-warnings h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: #842029;
+  margin-bottom: 16px;
+}
+
+.warning-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.terminated-warning-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #842029;
+}
+
+/* Info */
+.terminated-info {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+  text-align: left;
+}
+
+.terminated-info h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.info-items {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.info-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--grey);
+}
+
+.info-item span {
+  font-size: 20px;
+}
+
+/* Actions */
+.terminated-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+}
+
+.btn-go-dashboard {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.btn-go-dashboard:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-contact-support {
+  background-color: var(--white);
+  color: var(--primary);
+  padding: 14px 28px;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border: 2px solid var(--primary);
+  transition: all 0.3s;
+}
+
+.btn-contact-support:hover {
+  background-color: #f0faf4;
+}
