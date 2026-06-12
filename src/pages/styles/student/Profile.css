@@ -1,0 +1,113 @@
+/* ==================== PROFILE PAGE ==================== */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+.profile-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+.password-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  height: fit-content;
+}
+
+.password-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 24px;
+}
+
+/* Avatar Section */
+.profile-avatar-section {
+  text-align: center;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+
+.profile-avatar {
+  font-size: 80px;
+  margin-bottom: 12px;
+}
+
+.profile-avatar-section h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 6px;
+}
+
+.profile-avatar-section p {
+  font-size: 13px;
+  color: var(--primary);
+  background-color: #d8f3dc;
+  padding: 2px 12px;
+  border-radius: 50px;
+  display: inline-block;
+}
+
+/* Form */
+.profile-form h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.profile-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.profile-form .form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.profile-form .form-group input,
+.profile-form .form-group textarea {
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border 0.3s;
+  resize: none;
+}
+
+.profile-form .form-group input:focus,
+.profile-form .form-group textarea:focus {
+  border-color: var(--primary);
+}
+
+.btn-save {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 28px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+  width: 100%;
+  margin-top: 8px;
+}
+
+.btn-save:hover {
+  background-color: var(--primary-light);
+}
