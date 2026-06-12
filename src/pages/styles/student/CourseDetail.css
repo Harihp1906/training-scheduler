@@ -1,0 +1,203 @@
+/* ==================== COURSE DETAIL PAGE ==================== */
+
+.coursedetail-page {
+  min-height: calc(100vh - 70px);
+  background-color: var(--background);
+}
+
+/* Header */
+.coursedetail-header {
+  background: linear-gradient(135deg, #2D6A4F, #52B788);
+  padding: 60px;
+  color: var(--white);
+}
+
+.coursedetail-info h1 {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--white);
+  margin: 12px 0;
+}
+
+.coursedetail-info p {
+  font-size: 16px;
+  color: #d8f3dc;
+  max-width: 700px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.coursedetail-meta {
+  display: flex;
+  gap: 24px;
+  font-size: 14px;
+  color: #d8f3dc;
+}
+
+/* Content */
+.coursedetail-content {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 40px auto;
+  padding: 0 40px;
+}
+
+/* Chapters */
+.chapters-list h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 20px;
+}
+
+.chapter-item {
+  background-color: var(--white);
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  overflow: hidden;
+}
+
+.chapter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chapter-header:hover {
+  background-color: #f0faf4;
+}
+
+.chapter-header.active {
+  background-color: #d8f3dc;
+}
+
+.chapter-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.chapter-title h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--dark);
+}
+
+/* Lessons */
+.lessons-list {
+  border-top: 1px solid var(--border);
+}
+
+.lesson-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  transition: background-color 0.3s;
+}
+
+.lesson-item:hover {
+  background-color: #f8f9fa;
+}
+
+.lesson-title {
+  flex: 1;
+  font-size: 14px;
+  color: var(--dark);
+}
+
+.lesson-duration {
+  font-size: 13px;
+  color: var(--grey);
+}
+
+/* Side Panel */
+.side-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  position: sticky;
+  top: 90px;
+}
+
+.side-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.side-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.side-progress .progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.side-progress .progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 50px;
+}
+
+.side-progress span {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary);
+}
+
+.side-card > p {
+  font-size: 13px;
+  color: var(--grey);
+  margin-bottom: 24px;
+}
+
+.btn-quiz {
+  display: block;
+  text-align: center;
+  background-color: #f0faf4;
+  color: var(--primary);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  transition: background-color 0.3s;
+  border: 2px solid var(--primary);
+}
+
+.btn-quiz:hover {
+  background-color: #d8f3dc;
+}
+
+.btn-exam {
+  display: block;
+  text-align: center;
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-exam:hover {
+  background-color: var(--primary-light);
+}
