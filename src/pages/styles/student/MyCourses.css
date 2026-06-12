@@ -1,0 +1,121 @@
+/* ==================== MY COURSES PAGE ==================== */
+
+.mycourses-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.mycourse-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.3s;
+}
+
+.mycourse-card:hover {
+  transform: translateY(-4px);
+}
+
+.mycourse-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mycourse-status {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.mycourse-status.completed {
+  background-color: #d8f3dc;
+  color: var(--primary);
+}
+
+.mycourse-status.inprogress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.mycourse-card h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.mycourse-progress {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mycourse-progress .progress-bar {
+  flex: 1;
+  height: 8px;
+  background-color: #e9ecef;
+  border-radius: 50px;
+  overflow: hidden;
+}
+
+.mycourse-progress .progress-fill {
+  height: 100%;
+  background-color: var(--primary);
+  border-radius: 50px;
+}
+
+.mycourse-progress span {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--primary);
+  min-width: 35px;
+}
+
+.mycourse-lessons {
+  font-size: 13px;
+  color: var(--grey);
+}
+
+.mycourse-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.mycourse-actions .btn-continue {
+  flex: 1;
+  text-align: center;
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.mycourse-actions .btn-continue:hover {
+  background-color: var(--primary-light);
+}
+
+.btn-certificate {
+  flex: 1;
+  text-align: center;
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: background-color 0.3s;
+}
+
+.btn-certificate:hover {
+  background-color: #ffeaa7;
+}
