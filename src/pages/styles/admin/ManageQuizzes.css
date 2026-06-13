@@ -1,0 +1,83 @@
+/* ==================== MANAGE QUIZZES PAGE ==================== */
+
+.quiz-modal {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 36px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+}
+
+.quiz-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.quiz-form .form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.quiz-form .form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--dark);
+}
+
+.quiz-form .form-group input,
+.quiz-form .form-group select {
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border 0.3s;
+  background-color: var(--white);
+}
+
+.quiz-form .form-group input:focus,
+.quiz-form .form-group select:focus {
+  border-color: var(--primary);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.btn-cancel {
+  background-color: var(--white);
+  color: var(--grey);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  border: 1.5px solid var(--border);
+  transition: all 0.3s;
+}
+
+.btn-cancel:hover {
+  border-color: var(--grey);
+}
+
+.btn-create {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.btn-create:hover {
+  background-color: var(--primary-light);
+}
