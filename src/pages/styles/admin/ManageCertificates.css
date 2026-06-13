@@ -1,0 +1,127 @@
+/* ==================== MANAGE CERTIFICATES PAGE ==================== */
+
+.verify-section {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 28px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  margin-bottom: 24px;
+}
+
+.verify-section h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.verify-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.verify-form input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  transition: border 0.3s;
+}
+
+.verify-form input:focus {
+  border-color: var(--primary);
+}
+
+.btn-verify {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.btn-verify:hover {
+  background-color: var(--primary-light);
+}
+
+.verify-result {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+  border-radius: 10px;
+  margin-top: 12px;
+}
+
+.verify-result.valid {
+  background-color: #d8f3dc;
+  border-left: 4px solid var(--primary);
+}
+
+.verify-result.revoked {
+  background-color: #fde8e8;
+  border-left: 4px solid var(--error);
+}
+
+.verify-result.notfound {
+  background-color: #fde8e8;
+  border-left: 4px solid var(--error);
+}
+
+.verify-icon {
+  font-size: 32px;
+}
+
+.verify-result h4 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.verify-result p {
+  font-size: 14px;
+  color: var(--grey);
+}
+
+.cert-id {
+  font-weight: 700;
+  color: var(--primary);
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.grade-badge {
+  padding: 4px 10px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.grade-badge.distinction {
+  background-color: #d8f3dc;
+  color: var(--primary);
+}
+
+.grade-badge.merit {
+  background-color: #cfe2ff;
+  color: #084298;
+}
+
+.grade-badge.pass {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.revoked {
+  background-color: #fde8e8;
+  color: var(--error);
+}
