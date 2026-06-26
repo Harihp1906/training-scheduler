@@ -33,9 +33,10 @@ const Login = () => {
 
       if (data.token) {
         localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         navigate('/dashboard');
       } else {
-        alert(data.error);
+        alert(data.message || 'Login failed');
       }
 
     } catch (error) {
