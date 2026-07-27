@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/admin/ManageCourses.css';
 
 const ManageCourses = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   const [courses, setCourses] = useState([
     { id: 1, title: 'Java Programming', category: 'Programming', level: 'Beginner', lessons: 24, students: 245, status: 'Active' },
@@ -36,7 +44,7 @@ const ManageCourses = () => {
           <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
           <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
           <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <Link to="/login" className="sidebar-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
         </nav>
       </div>
 

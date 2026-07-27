@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/admin/ManageCertificates.css';
 
 const ManageCertificates = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   const [certificates, setCertificates] = useState([
     { id: 'TS-2024-001', student: 'Hari Preyadharshan', email: 'hari@example.com', course: 'Java Programming', score: '92%', grade: 'Distinction', date: 'June 12, 2024', status: 'Valid' },
@@ -52,7 +60,7 @@ const ManageCertificates = () => {
           <Link to="/admin/certificates" className="sidebar-link active">🏆 Certificates</Link>
           <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
           <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <Link to="/login" className="sidebar-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
         </nav>
       </div>
 

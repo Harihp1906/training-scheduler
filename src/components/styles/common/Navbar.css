@@ -69,3 +69,9 @@
 .btn-register:hover {
   background-color: var(--primary-accent);
 }
+
+.btn-navbar-logout {
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+}

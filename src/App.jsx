@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Navbar from './components/common/Navbar.jsx';
 import Footer from './components/common/Footer.jsx';
+import PrivateRoute from './components/common/PrivateRoute.jsx';
 
 // Public Pages
 import Home from './pages/public/Home.jsx';
@@ -46,8 +47,8 @@ function App() {
         <Route path="/register" element={<Register />} />
 
         {/* Student Routes */}
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/my-courses" element={<MyCourses />} />
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/my-courses" element={<PrivateRoute><MyCourses /></PrivateRoute>} />
         <Route path="/course/:id" element={<CourseDetail />} />
         <Route path="/quiz/:id" element={<Quiz />} />
         <Route path="/exam/instructions" element={<ExamInstructions />} />
@@ -57,14 +58,14 @@ function App() {
         <Route path="/profile" element={<Profile />} />
 
         {/* Admin Routes */}
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        <Route path="/admin/courses" element={<ManageCourses />} />
-        <Route path="/admin/courses/create" element={<CreateCourse />} />
-        <Route path="/admin/students" element={<ManageStudents />} />
-        <Route path="/admin/quizzes" element={<ManageQuizzes />} />
-        <Route path="/admin/certificates" element={<ManageCertificates />} />
-        <Route path="/admin/batches" element={<ManageBatches />} />
-        <Route path="/admin/reports" element={<Reports />} />
+        <Route path="/admin/dashboard" element={<PrivateRoute adminOnly><AdminDashboard /></PrivateRoute>} />
+        <Route path="/admin/courses" element={<PrivateRoute adminOnly><ManageCourses /></PrivateRoute>} />
+        <Route path="/admin/courses/create" element={<PrivateRoute adminOnly><CreateCourse /></PrivateRoute>} />
+        <Route path="/admin/students" element={<PrivateRoute adminOnly><ManageStudents /></PrivateRoute>} />
+        <Route path="/admin/quizzes" element={<PrivateRoute adminOnly><ManageQuizzes /></PrivateRoute>} />
+        <Route path="/admin/certificates" element={<PrivateRoute adminOnly><ManageCertificates /></PrivateRoute>} />
+        <Route path="/admin/batches" element={<PrivateRoute adminOnly><ManageBatches /></PrivateRoute>} />
+        <Route path="/admin/reports" element={<PrivateRoute adminOnly><Reports /></PrivateRoute>} />
 
       </Routes>
       <Footer />

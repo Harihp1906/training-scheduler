@@ -1,7 +1,15 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/admin/AdminDashboard.css';
 
 const AdminDashboard = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   const stats = [
     { title: 'Total Students', value: '1,245', icon: '👨‍🎓' },
@@ -35,7 +43,7 @@ const AdminDashboard = () => {
           <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
           <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
           <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <Link to="/login" className="sidebar-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
         </nav>
       </div>
 

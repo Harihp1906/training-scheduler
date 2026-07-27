@@ -6,6 +6,12 @@ const CreateCourse = () => {
 
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
+
   const [courseData, setCourseData] = useState({
     title: '',
     category: '',
@@ -89,7 +95,7 @@ const CreateCourse = () => {
           <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
           <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
           <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <Link to="/login" className="sidebar-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
         </nav>
       </div>
 

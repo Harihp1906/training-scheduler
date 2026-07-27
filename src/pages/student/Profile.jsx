@@ -1,8 +1,16 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import '../styles/student/Profile.css';
 
 const Profile = () => {
+
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    navigate('/login');
+  };
 
   const [formData, setFormData] = useState({
     fullName: 'Hari Preyadharshan S P',
@@ -55,7 +63,7 @@ const Profile = () => {
           <Link to="/my-courses" className="sidebar-link">📚 My Courses</Link>
           <Link to="/courses" className="sidebar-link">🔍 Browse Courses</Link>
           <Link to="/profile" className="sidebar-link active">👤 Profile</Link>
-          <Link to="/login" className="sidebar-link logout">🚪 Logout</Link>
+          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
         </nav>
       </div>
 

@@ -1,47 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import '../styles/student/CourseDetail.css';
+
+// Placeholder chapter/lesson structure — backend has no curriculum model yet,
+// so this stays static until a Chapter/Lesson entity exists.
+const placeholderChapters = [
+  {
+    id: 1, title: 'Introduction', completed: true,
+    lessons: [
+      { id: 1, title: 'Getting Started', duration: '10 min', completed: true },
+      { id: 2, title: 'Setup & Tools', duration: '15 min', completed: true },
+      { id: 3, title: 'First Steps', duration: '20 min', completed: true },
+    ]
+  },
+  {
+    id: 2, title: 'Core Concepts', completed: false,
+    lessons: [
+      { id: 4, title: 'Fundamentals', duration: '25 min', completed: true },
+      { id: 5, title: 'Practice', duration: '20 min', completed: false },
+      { id: 6, title: 'Deep Dive', duration: '30 min', completed: false },
+    ]
+  },
+];
 
 const CourseDetail = () => {
 
   const { id } = useParams();
   const [activeChapter, setActiveChapter] = useState(0);
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-  const course = {
-    id: id,
-    title: 'Java Programming',
-    category: 'Programming',
-    level: 'Beginner',
-    duration: '8 weeks',
-    totalLessons: 24,
-    description: 'Master Java from basics to advanced OOP concepts. This course covers everything you need to become a professional Java developer.',
-    chapters: [
-      {
-        id: 1, title: 'Introduction to Java', completed: true,
-        lessons: [
-          { id: 1, title: 'What is Java?', duration: '10 min', completed: true },
-          { id: 2, title: 'Installing Java JDK', duration: '15 min', completed: true },
-          { id: 3, title: 'First Java Program', duration: '20 min', completed: true },
-        ]
-      },
-      {
-        id: 2, title: 'Java Basics', completed: true,
-        lessons: [
-          { id: 4, title: 'Variables and Data Types', duration: '25 min', completed: true },
-          { id: 5, title: 'Operators', duration: '20 min', completed: true },
-          { id: 6, title: 'Control Statements', duration: '30 min', completed: false },
-        ]
-      },
-      {
-        id: 3, title: 'Object Oriented Programming', completed: false,
-        lessons: [
-          { id: 7, title: 'Classes and Objects', duration: '30 min', completed: false },
-          { id: 8, title: 'Inheritance', duration: '25 min', completed: false },
-          { id: 9, title: 'Polymorphism', duration: '25 min', completed: false },
-        ]
-      },
-    ]
-  };
+  useEffect(() => {
+    fetch(`http://localhost:8080/api/courses/${id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Course not found');
+        return res.json();
+      })
+      .then(data => {
+        setCourse(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching course:', err);
+        setError(true);
+        setLoading(false);
+      });
+  }, [id]);
+
+  if (loading) return <div className="coursedetail-page"><p style={{ padding: '2rem' }}>Loading course...</p></div>;
+  if (error || !course) return <div className="coursedetail-page"><p style={{ padding: '2rem' }}>Course not found.</p></div>;
 
   return (
     <div className="coursedetail-page">
@@ -66,7 +74,7 @@ const CourseDetail = () => {
         {/* Chapters */}
         <div className="chapters-list">
           <h2>Course Content</h2>
-          {course.chapters.map((chapter, index) => (
+          {placeholderChapters.map((chapter, index) => (
             <div className="chapter-item" key={chapter.id}>
               <div
                 className={`chapter-header ${activeChapter === index ? 'active' : ''}`}
