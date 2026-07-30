@@ -1,10 +1,13 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
 import '../styles/admin/CreateCourse.css';
 
 const CreateCourse = () => {
 
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -20,6 +23,32 @@ const CreateCourse = () => {
     description: '',
     thumbnail: ''
   });
+
+  const [loadingCourse, setLoadingCourse] = useState(isEditMode);
+
+  // Prefill the form when editing an existing course.
+  // Chapters/lessons below are UI-only — the backend has no Chapter/Lesson
+  // entity yet, so they're not persisted or restored here.
+  useEffect(() => {
+    if (!isEditMode) return;
+    apiFetch(`/api/courses/${id}`)
+      .then(res => res.json())
+      .then(data => {
+        setCourseData({
+          title: data.title || '',
+          category: data.category || '',
+          level: data.level || '',
+          duration: data.duration || '',
+          description: data.description || '',
+          thumbnail: ''
+        });
+        setLoadingCourse(false);
+      })
+      .catch(err => {
+        console.error('Error fetching course:', err);
+        setLoadingCourse(false);
+      });
+  }, [id, isEditMode]);
 
   const [chapters, setChapters] = useState([
     { id: 1, title: '', lessons: [{ id: 1, title: '', duration: '', videoUrl: '' }] }
@@ -70,12 +99,34 @@ const CreateCourse = () => {
     setChapters(updated);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Course Data:', courseData);
-    console.log('Chapters:', chapters);
-    alert('Course created successfully!');
-    navigate('/admin/courses');
+
+    const totalLessons = chapters.reduce((sum, ch) => sum + ch.lessons.length, 0);
+    const payload = {
+      title: courseData.title,
+      category: courseData.category,
+      level: courseData.level,
+      duration: courseData.duration,
+      description: courseData.description,
+      totalLessons,
+    };
+
+    try {
+      const response = await apiFetch(isEditMode ? `/api/courses/${id}` : '/api/courses', {
+        method: isEditMode ? 'PUT' : 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Request failed');
+
+      alert(isEditMode ? 'Course updated successfully!' : 'Course created successfully!');
+      navigate('/admin/courses');
+    } catch (error) {
+      console.error('Error saving course:', error);
+      alert('Something went wrong. Please try again.');
+    }
   };
 
   return (
@@ -103,11 +154,13 @@ const CreateCourse = () => {
       <div className="admin-main">
 
         <div className="admin-welcome">
-          <h1>Create New Course</h1>
-          <p>Fill in the details to add a new course to the platform</p>
+          <h1>{isEditMode ? 'Edit Course' : 'Create New Course'}</h1>
+          <p>{isEditMode ? 'Update the course details below' : 'Fill in the details to add a new course to the platform'}</p>
         </div>
 
-        <form className="create-course-form" onSubmit={handleSubmit}>
+        {loadingCourse && <p style={{ padding: '2rem' }}>Loading course...</p>}
+
+        {!loadingCourse && <form className="create-course-form" onSubmit={handleSubmit}>
 
           {/* Course Details */}
           <div className="form-section">
@@ -273,11 +326,11 @@ const CreateCourse = () => {
               Cancel
             </button>
             <button type="submit" className="btn-create">
-              ✅ Create Course
+              {isEditMode ? '✅ Save Changes' : '✅ Create Course'}
             </button>
           </div>
 
-        </form>
+        </form>}
       </div>
     </div>
   );

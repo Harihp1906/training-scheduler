@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
 import '../styles/public/Register.css';
 
 const Register = () => {
@@ -20,7 +21,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/register', {
+      const response = await apiFetch('/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

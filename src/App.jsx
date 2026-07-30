@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Navbar from './components/common/Navbar.jsx';
 import Footer from './components/common/Footer.jsx';
 import PrivateRoute from './components/common/PrivateRoute.jsx';
@@ -55,17 +55,27 @@ function App() {
         <Route path="/exam/:id" element={<Exam />} />
         <Route path="/exam/terminated" element={<ExamTerminated />} />
         <Route path="/certificate/:id" element={<Certificate />} />
-        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
 
         {/* Admin Routes */}
         <Route path="/admin/dashboard" element={<PrivateRoute adminOnly><AdminDashboard /></PrivateRoute>} />
         <Route path="/admin/courses" element={<PrivateRoute adminOnly><ManageCourses /></PrivateRoute>} />
         <Route path="/admin/courses/create" element={<PrivateRoute adminOnly><CreateCourse /></PrivateRoute>} />
+        <Route path="/admin/courses/edit/:id" element={<PrivateRoute adminOnly><CreateCourse /></PrivateRoute>} />
         <Route path="/admin/students" element={<PrivateRoute adminOnly><ManageStudents /></PrivateRoute>} />
         <Route path="/admin/quizzes" element={<PrivateRoute adminOnly><ManageQuizzes /></PrivateRoute>} />
         <Route path="/admin/certificates" element={<PrivateRoute adminOnly><ManageCertificates /></PrivateRoute>} />
         <Route path="/admin/batches" element={<PrivateRoute adminOnly><ManageBatches /></PrivateRoute>} />
         <Route path="/admin/reports" element={<PrivateRoute adminOnly><Reports /></PrivateRoute>} />
+
+        {/* 404 */}
+        <Route path="*" element={
+          <div style={{ padding: '80px 20px', textAlign: 'center' }}>
+            <h1 style={{ fontSize: '32px', color: 'var(--dark)', marginBottom: '12px' }}>404 — Page Not Found</h1>
+            <p style={{ color: 'var(--grey)', marginBottom: '24px' }}>The page you're looking for doesn't exist.</p>
+            <Link to="/" style={{ color: 'var(--primary)', fontWeight: 600 }}>Go back home</Link>
+          </div>
+        } />
 
       </Routes>
       <Footer />

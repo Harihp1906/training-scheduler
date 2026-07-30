@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
 import '../styles/public/Login.css';
 
 const Login = () => {
@@ -18,7 +19,7 @@ const Login = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch('http://localhost:8080/api/auth/login', {
+      const response = await apiFetch('/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -88,7 +89,7 @@ const Login = () => {
           </div>
 
           <div className="login-forgot">
-            <Link to="/forgot-password">Forgot Password?</Link>
+            <span className="login-forgot-disabled" title="Coming soon">Forgot Password?</span>
           </div>
 
           <button type="submit" className="btn-login-submit">

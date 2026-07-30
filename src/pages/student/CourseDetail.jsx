@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
 import '../styles/student/CourseDetail.css';
 
 // Placeholder chapter/lesson structure — backend has no curriculum model yet,
@@ -32,7 +33,7 @@ const CourseDetail = () => {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    fetch(`http://localhost:8080/api/courses/${id}`)
+    apiFetch(`/api/courses/${id}`)
       .then(res => {
         if (!res.ok) throw new Error('Course not found');
         return res.json();

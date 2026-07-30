@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/api';
 import '../styles/student/MyCourses.css';
 
 const MyCourses = () => {
@@ -16,7 +17,7 @@ const MyCourses = () => {
     }
     setUser(storedUser);
 
-    fetch(`http://localhost:8080/api/enrollments/user/${storedUser.id}`)
+    apiFetch(`/api/enrollments/user/${storedUser.id}`)
       .then(res => res.json())
       .then(data => {
         setEnrollments(data);

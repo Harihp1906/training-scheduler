@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
 import '../styles/public/Courses.css';
 
 const Courses = () => {
@@ -11,7 +12,7 @@ const Courses = () => {
 
   // Fetch real courses from backend when page loads
   useEffect(() => {
-    fetch('http://localhost:8080/api/courses')
+    apiFetch('/api/courses')
       .then(res => res.json())
       .then(data => {
         setCourses(data);

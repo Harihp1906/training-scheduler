@@ -126,6 +126,12 @@
   text-decoration: underline;
 }
 
+.login-forgot-disabled {
+  font-size: 14px;
+  color: var(--grey);
+  cursor: not-allowed;
+}
+
 /* Submit Button */
 .btn-login-submit {
   background-color: var(--primary);
