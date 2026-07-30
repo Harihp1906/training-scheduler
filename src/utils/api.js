@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
 
 // Thin wrapper around fetch — same signature as fetch(url, options),
 // just prefixes the backend base URL and attaches the JWT if one exists.
