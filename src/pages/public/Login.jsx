@@ -55,15 +55,6 @@ const Login = () => {
           <h3>Welcome Back</h3>
         </div>
 
-        <button className="btn-google">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-          Continue with Google
-        </button>
-
-        <div className="login-divider">
-          <span>or</span>
-        </div>
-
         <form className="login-form" onSubmit={handleSubmit}>
 
           <div className="form-group">

@@ -56,15 +56,6 @@ const Register = () => {
           <p>Start your learning journey today</p>
         </div>
 
-        <button className="btn-google">
-          <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" />
-          Continue with Google
-        </button>
-
-        <div className="register-divider">
-          <span>or</span>
-        </div>
-
         <form className="register-form" onSubmit={handleSubmit}>
 
           <div className="form-group">
