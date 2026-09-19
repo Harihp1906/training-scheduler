@@ -1,24 +1,25 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import '../styles/admin/ManageStudents.css';
 
 const ManageStudents = () => {
 
-  const navigate = useNavigate();
+  const [students, setStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
-  const [students, setStudents] = useState([
-    { id: 1, name: 'Hari Preyadharshan', email: 'hari@example.com', phone: '9876543210', courses: 3, progress: 75, certificates: 1, status: 'Active' },
-    { id: 2, name: 'Priya Sharma', email: 'priya@example.com', phone: '9876543211', courses: 2, progress: 50, certificates: 0, status: 'Active' },
-    { id: 3, name: 'Rahul Kumar', email: 'rahul@example.com', phone: '9876543212', courses: 4, progress: 100, certificates: 3, status: 'Active' },
-    { id: 4, name: 'Anjali Singh', email: 'anjali@example.com', phone: '9876543213', courses: 1, progress: 30, certificates: 0, status: 'Blocked' },
-    { id: 5, name: 'Vikram Nair', email: 'vikram@example.com', phone: '9876543214', courses: 2, progress: 60, certificates: 1, status: 'Active' },
-  ]);
+  useEffect(() => {
+    apiFetch('/api/admin/students')
+      .then(res => res.json())
+      .then(data => {
+        setStudents(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching students:', err);
+        setLoading(false);
+      });
+  }, []);
 
   const [search, setSearch] = useState('');
   const [selectedStudent, setSelectedStudent] = useState(null);
@@ -28,32 +29,27 @@ const ManageStudents = () => {
     s.email.toLowerCase().includes(search.toLowerCase())
   );
 
-  const toggleStatus = (id) => {
-    setStudents(students.map(s =>
-      s.id === id ? { ...s, status: s.status === 'Active' ? 'Blocked' : 'Active' } : s
-    ));
+  const toggleStatus = async (student) => {
+    const newStatus = student.status === 'Active' ? 'Blocked' : 'Active';
+    try {
+      const response = await apiFetch(`/api/admin/students/${student.id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (!response.ok) throw new Error('Status update failed');
+      const updated = await response.json();
+      setStudents(students.map(s => (s.id === student.id ? updated : s)));
+    } catch (error) {
+      console.error('Error updating student status:', error);
+      alert('Failed to update student status. Please try again.');
+    }
   };
 
   return (
     <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link active">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -75,73 +71,75 @@ const ManageStudents = () => {
           <span className="students-count">{filtered.length} students found</span>
         </div>
 
+        {loading && <p style={{ padding: '2rem' }}>Loading students...</p>}
+
         {/* Students Table */}
-        <div className="admin-section">
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Student</th>
-                  <th>Phone</th>
-                  <th>Courses</th>
-                  <th>Progress</th>
-                  <th>Certificates</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((student, index) => (
-                  <tr key={student.id}>
-                    <td>{index + 1}</td>
-                    <td>
-                      <div className="student-info">
-                        <span className="student-avatar">👤</span>
-                        <div>
-                          <p className="student-name">{student.name}</p>
-                          <p className="student-email">{student.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{student.phone}</td>
-                    <td>{student.courses}</td>
-                    <td>
-                      <div className="table-progress">
-                        <div className="progress-bar">
-                          <div className="progress-fill" style={{ width: `${student.progress}%` }}></div>
-                        </div>
-                        <span>{student.progress}%</span>
-                      </div>
-                    </td>
-                    <td>🏆 {student.certificates}</td>
-                    <td>
-                      <span className={`status-badge ${student.status.toLowerCase()}`}>
-                        {student.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button
-                          className="btn-view"
-                          onClick={() => setSelectedStudent(student)}
-                        >
-                          👁️ View
-                        </button>
-                        <button
-                          className={`btn-toggle ${student.status === 'Active' ? 'block' : 'unblock'}`}
-                          onClick={() => toggleStatus(student.id)}
-                        >
-                          {student.status === 'Active' ? '🚫 Block' : '✅ Unblock'}
-                        </button>
-                      </div>
-                    </td>
+        {!loading && (
+          <div className="admin-section">
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Student</th>
+                    <th>Courses</th>
+                    <th>Progress</th>
+                    <th>Certificates</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.map((student, index) => (
+                    <tr key={student.id}>
+                      <td>{index + 1}</td>
+                      <td>
+                        <div className="student-info">
+                          <span className="student-avatar">👤</span>
+                          <div>
+                            <p className="student-name">{student.name}</p>
+                            <p className="student-email">{student.email}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{student.courses}</td>
+                      <td>
+                        <div className="table-progress">
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${student.progress}%` }}></div>
+                          </div>
+                          <span>{student.progress}%</span>
+                        </div>
+                      </td>
+                      <td>🏆 {student.certificates}</td>
+                      <td>
+                        <span className={`status-badge ${student.status.toLowerCase()}`}>
+                          {student.status}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <button
+                            className="btn-view"
+                            onClick={() => setSelectedStudent(student)}
+                          >
+                            👁️ View
+                          </button>
+                          <button
+                            className={`btn-toggle ${student.status === 'Active' ? 'block' : 'unblock'}`}
+                            onClick={() => toggleStatus(student)}
+                          >
+                            {student.status === 'Active' ? '🚫 Block' : '✅ Unblock'}
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Student Detail Modal */}
         {selectedStudent && (
@@ -170,7 +168,6 @@ const ManageStudents = () => {
                   </div>
                 </div>
                 <div className="modal-info">
-                  <p><strong>Phone:</strong> {selectedStudent.phone}</p>
                   <p><strong>Status:</strong> {selectedStudent.status}</p>
                 </div>
               </div>

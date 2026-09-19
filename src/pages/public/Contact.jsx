@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { apiFetch } from '../../utils/api';
 import '../styles/public/Contact.css';
 
 const Contact = () => {
@@ -9,15 +10,32 @@ const Contact = () => {
     subject: '',
     message: ''
   });
+  const [submitting, setSubmitting] = useState(false);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Contact Data:', formData);
-    alert('Message sent successfully!');
+    setSubmitting(true);
+    try {
+      const response = await apiFetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+      const data = await response.json();
+      alert(data.message || (response.ok ? 'Message sent successfully!' : 'Something went wrong.'));
+      if (response.ok) {
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      }
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -114,8 +132,8 @@ const Contact = () => {
               />
             </div>
 
-            <button type="submit" className="btn-contact-submit">
-              Send Message
+            <button type="submit" className="btn-contact-submit" disabled={submitting}>
+              {submitting ? 'Sending...' : 'Send Message'}
             </button>
 
           </form>

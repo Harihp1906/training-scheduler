@@ -187,3 +187,64 @@
 .cta-box .btn-primary:hover {
   background-color: var(--primary-light);
 }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .hero {
+    padding: 60px 24px;
+  }
+
+  .hero-content h1 {
+    font-size: 34px;
+  }
+
+  .hero-content p {
+    font-size: 16px;
+  }
+
+  .hero-buttons {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .stats {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 40px 24px;
+  }
+
+  .stat-card {
+    flex: 1 1 calc(50% - 16px);
+    min-width: 140px;
+    padding: 20px;
+  }
+
+  .features {
+    padding: 50px 24px;
+  }
+
+  .section-title {
+    font-size: 28px;
+    margin-bottom: 30px;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta {
+    padding: 50px 24px;
+  }
+
+  .cta-box {
+    display: block;
+    padding: 36px 24px;
+  }
+}

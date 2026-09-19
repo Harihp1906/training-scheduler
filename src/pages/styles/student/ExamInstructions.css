@@ -196,3 +196,26 @@
 .btn-start-exam:hover {
   background-color: var(--primary-light);
 }
+
+@media (max-width: 640px) {
+  .instructions-header {
+    padding: 36px 24px;
+  }
+
+  .instructions-header h1 {
+    font-size: 26px;
+  }
+
+  .instructions-section {
+    padding: 24px 20px;
+  }
+
+  .rules-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .btn-start-exam {
+    width: 100%;
+    padding: 16px;
+  }
+}

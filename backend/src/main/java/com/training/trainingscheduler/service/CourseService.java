@@ -1,8 +1,12 @@
 package com.training.trainingscheduler.service;
 
+import com.training.trainingscheduler.dto.CourseRequest;
+import com.training.trainingscheduler.dto.CourseResponse;
 import com.training.trainingscheduler.entity.Course;
+import com.training.trainingscheduler.entity.CourseStatus;
+import com.training.trainingscheduler.exception.ApiException;
 import com.training.trainingscheduler.repository.CourseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.training.trainingscheduler.security.AuthUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,53 +14,68 @@ import java.util.List;
 @Service
 public class CourseService {
 
-    @Autowired
-    private CourseRepository courseRepository;
+    private final CourseRepository courseRepository;
 
-    // Get all courses (for admin)
-    public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
     }
 
-    // Get only active courses (for students)
-    public List<Course> getActiveCourses() {
-        return courseRepository.findByStatus("Active");
+    public List<CourseResponse> getActiveCourses() {
+        return courseRepository.findByStatus(CourseStatus.ACTIVE).stream()
+                .map(CourseResponse::from)
+                .toList();
     }
 
-    // Get single course by ID
-    public Course getCourseById(Long id) {
-        return courseRepository.findById(id).orElse(null);
+    public List<CourseResponse> getAllCourses() {
+        return courseRepository.findAll().stream()
+                .map(CourseResponse::from)
+                .toList();
     }
 
-    // Create new course (admin only)
-    public Course createCourse(Course course) {
-        course.setStatus("Active");
-        return courseRepository.save(course);
+    // Public catalog callers only ever see ACTIVE courses; admins (editing a
+    // course, incl. an inactive one) see the full record regardless of status.
+    public CourseResponse getCourseById(Long id, AuthUser currentUser) {
+        Course course = findCourseOrThrow(id);
+        boolean isAdmin = currentUser != null && currentUser.isAdmin();
+        if (course.getStatus() != CourseStatus.ACTIVE && !isAdmin) {
+            throw ApiException.notFound("Course not found");
+        }
+        return CourseResponse.from(course);
     }
 
-    // Update existing course (admin only)
-    public Course updateCourse(Long id, Course updatedCourse) {
-        Course existing = courseRepository.findById(id).orElse(null);
-        if (existing == null) return null;
-
-        existing.setTitle(updatedCourse.getTitle());
-        existing.setDescription(updatedCourse.getDescription());
-        existing.setCategory(updatedCourse.getCategory());
-        existing.setLevel(updatedCourse.getLevel());
-        existing.setDuration(updatedCourse.getDuration());
-        existing.setTotalLessons(updatedCourse.getTotalLessons());
-        existing.setStatus(updatedCourse.getStatus());
-
-        return courseRepository.save(existing);
+    public CourseResponse createCourse(CourseRequest request) {
+        Course course = new Course();
+        applyRequest(course, request);
+        course.setStatus(CourseStatus.ACTIVE);
+        return CourseResponse.from(courseRepository.save(course));
     }
 
-    // Delete course (admin only)
-    public String deleteCourse(Long id) {
+    public CourseResponse updateCourse(Long id, CourseRequest request) {
+        Course course = findCourseOrThrow(id);
+        applyRequest(course, request);
+        return CourseResponse.from(courseRepository.save(course));
+    }
+
+    public void deleteCourse(Long id) {
         if (!courseRepository.existsById(id)) {
-            return "Course not found!";
+            throw ApiException.notFound("Course not found");
         }
         courseRepository.deleteById(id);
-        return "Course deleted successfully!";
+    }
+
+    Course findCourseOrThrow(Long id) {
+        return courseRepository.findById(id)
+                .orElseThrow(() -> ApiException.notFound("Course not found"));
+    }
+
+    private void applyRequest(Course course, CourseRequest request) {
+        course.setTitle(request.getTitle());
+        course.setDescription(request.getDescription());
+        course.setCategory(request.getCategory());
+        course.setLevel(request.getLevel());
+        course.setDuration(request.getDuration());
+        course.setTotalLessons(request.getTotalLessons());
+        course.setThumbnailUrl(request.getThumbnailUrl());
     }
 
 }

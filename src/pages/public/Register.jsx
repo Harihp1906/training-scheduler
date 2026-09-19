@@ -33,11 +33,13 @@ const Register = () => {
         }),
       });
 
-      const message = await response.text();
-      alert(message);
+      const data = await response.json();
 
-      if (message === 'Registration successful!') {
+      if (response.ok) {
+        alert('Registration successful!');
         navigate('/login');
+      } else {
+        alert(data.message || 'Registration failed');
       }
 
     } catch (error) {

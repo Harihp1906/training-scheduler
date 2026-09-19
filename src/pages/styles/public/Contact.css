@@ -142,3 +142,30 @@
 .btn-contact-submit:hover {
   background-color: var(--primary-light);
 }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .contact-container {
+    grid-template-columns: 1fr;
+    margin: 40px auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .contact-hero {
+    padding: 50px 24px;
+  }
+
+  .contact-hero h1 {
+    font-size: 30px;
+  }
+
+  .contact-container {
+    padding: 0 20px;
+    gap: 24px;
+  }
+
+  .contact-form-box {
+    padding: 24px;
+  }
+}

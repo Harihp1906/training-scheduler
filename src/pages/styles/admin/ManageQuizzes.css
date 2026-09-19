@@ -1,54 +1,13 @@
-/* ==================== MANAGE QUIZZES PAGE ==================== */
+/* ==================== MANAGE QUIZZES PAGE ====================
+   .modal-overlay/.modal-header/.modal-close/.modal-actions/.quiz-modal/
+   .quiz-form (base) now live in index.css -- also used as-is by
+   ManageBatches.jsx. Only the "large" variant and question editor below
+   are specific to this page. */
 
-.quiz-modal {
-  background-color: var(--white);
-  border-radius: 20px;
-  padding: 36px;
-  width: 100%;
-  max-width: 500px;
-  box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-}
-
-.quiz-form {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.quiz-form .form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.quiz-form .form-group label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--dark);
-}
-
-.quiz-form .form-group input,
-.quiz-form .form-group select {
-  padding: 12px 16px;
-  border: 1.5px solid var(--border);
-  border-radius: 8px;
-  font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  outline: none;
-  transition: border 0.3s;
-  background-color: var(--white);
-}
-
-.quiz-form .form-group input:focus,
-.quiz-form .form-group select:focus {
-  border-color: var(--primary);
-}
-
-.modal-actions {
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-  margin-top: 8px;
+.quiz-modal-large {
+  max-width: 700px;
+  max-height: 88vh;
+  overflow-y: auto;
 }
 
 .btn-cancel {
@@ -78,6 +37,147 @@
   transition: background-color 0.3s;
 }
 
-.btn-create:hover {
+.btn-create:hover:not(:disabled) {
   background-color: var(--primary-light);
+}
+
+.btn-create:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Status badge -- ACTIVE handled globally (AdminSidebar.css), INACTIVE was
+   previously never styled anywhere on this page. */
+.status-badge.inactive {
+  background-color: #f8d7da;
+  color: #842029;
+}
+
+/* Questions section */
+.questions-section {
+  border-top: 1.5px solid var(--border);
+  padding-top: 16px;
+}
+
+.questions-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.questions-section-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.btn-add-question {
+  background-color: #f0faf4;
+  color: var(--primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.btn-add-question:hover {
+  background-color: #d8f3dc;
+}
+
+.question-editor {
+  background-color: var(--background);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.question-editor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.question-editor-header h4 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--dark);
+}
+
+.btn-remove-question {
+  background: none;
+  color: var(--error);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+}
+
+.options-hint {
+  font-size: 12px;
+  color: var(--grey);
+  margin-top: 4px;
+}
+
+.option-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.option-row input[type="radio"] {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+}
+
+.option-row input[type="text"] {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  outline: none;
+  background-color: var(--white);
+}
+
+.option-row input[type="text"]:focus {
+  border-color: var(--primary);
+}
+
+.btn-remove-option {
+  background: none;
+  color: var(--grey);
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 8px;
+  flex-shrink: 0;
+}
+
+.btn-remove-option:hover {
+  color: var(--error);
+}
+
+.btn-add-option {
+  background: none;
+  color: var(--primary);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+
+@media (max-width: 640px) {
+  .quiz-modal-large {
+    max-width: 100%;
+    max-height: 92vh;
+    padding: 24px 18px;
+  }
 }

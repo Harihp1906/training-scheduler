@@ -111,3 +111,9 @@
 .btn-save:hover {
   background-color: var(--primary-light);
 }
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}

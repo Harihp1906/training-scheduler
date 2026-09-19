@@ -35,7 +35,8 @@ const Login = () => {
       if (data.token) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        navigate('/dashboard');
+        const isAdmin = data.user.role?.toLowerCase() === 'admin';
+        navigate(isAdmin ? '/admin/dashboard' : '/dashboard');
       } else {
         alert(data.message || 'Login failed');
       }

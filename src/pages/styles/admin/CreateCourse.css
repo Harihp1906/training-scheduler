@@ -40,6 +40,15 @@
   color: var(--dark);
 }
 
+.thumbnail-preview {
+  margin-top: 4px;
+  width: 220px;
+  height: 132px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+}
+
 .form-group input,
 .form-group select,
 .form-group textarea {
@@ -203,4 +212,22 @@
 
 .btn-create:hover {
   background-color: var(--primary-light);
+}
+
+@media (max-width: 640px) {
+  .form-section {
+    padding: 20px;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  .form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .form-actions button {
+    width: 100%;
+  }
 }

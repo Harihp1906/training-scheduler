@@ -1,12 +1,17 @@
 package com.training.trainingscheduler.service;
 
+import com.training.trainingscheduler.dto.EnrollRequest;
+import com.training.trainingscheduler.dto.EnrollmentAdminResponse;
+import com.training.trainingscheduler.dto.EnrollmentResponse;
 import com.training.trainingscheduler.entity.Course;
 import com.training.trainingscheduler.entity.Enrollment;
+import com.training.trainingscheduler.entity.EnrollmentStatus;
 import com.training.trainingscheduler.entity.User;
+import com.training.trainingscheduler.exception.ApiException;
 import com.training.trainingscheduler.repository.CourseRepository;
 import com.training.trainingscheduler.repository.EnrollmentRepository;
 import com.training.trainingscheduler.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.training.trainingscheduler.security.AuthUser;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,59 +20,70 @@ import java.util.Optional;
 @Service
 public class EnrollmentService {
 
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
+    private static final EnrollmentStatus STATUS_IN_PROGRESS = EnrollmentStatus.IN_PROGRESS;
+    private static final EnrollmentStatus STATUS_COMPLETED = EnrollmentStatus.COMPLETED;
 
-    @Autowired
-    private UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
+    public EnrollmentService(EnrollmentRepository enrollmentRepository, UserRepository userRepository,
+                              CourseRepository courseRepository) {
+        this.enrollmentRepository = enrollmentRepository;
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+    }
 
-    // Enroll a student into a course
-    public Enrollment enrollStudent(Long userId, Long courseId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
+    public EnrollmentResponse enroll(AuthUser currentUser, EnrollRequest request) {
+        User user = userRepository.findById(currentUser.id())
+                .orElseThrow(() -> ApiException.notFound("User not found"));
+        Course course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> ApiException.notFound("Course not found"));
 
-        // Prevent duplicate enrollment
         Optional<Enrollment> existing = enrollmentRepository.findByUserAndCourse(user, course);
         if (existing.isPresent()) {
-            throw new RuntimeException("Already enrolled in this course");
+            throw ApiException.conflict("Already enrolled in this course");
         }
 
         Enrollment enrollment = new Enrollment();
         enrollment.setUser(user);
         enrollment.setCourse(course);
         enrollment.setProgress(0);
-        enrollment.setStatus("In Progress");
+        enrollment.setStatus(STATUS_IN_PROGRESS);
 
-        return enrollmentRepository.save(enrollment);
+        return EnrollmentResponse.from(enrollmentRepository.save(enrollment));
     }
 
-    // Get all enrollments for a specific student
-    public List<Enrollment> getEnrollmentsByUser(Long userId) {
+    public List<EnrollmentResponse> getEnrollmentsForUser(AuthUser currentUser, Long userId) {
+        currentUser.requireOwnerOrAdmin(userId, "You can only access your own enrollments");
+
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-        return enrollmentRepository.findByUser(user);
+                .orElseThrow(() -> ApiException.notFound("User not found"));
+
+        return enrollmentRepository.findByUser(user).stream()
+                .map(EnrollmentResponse::from)
+                .toList();
     }
 
-    // Get all enrollments for a specific course (admin use)
-    public List<Enrollment> getEnrollmentsByCourse(Long courseId) {
+    public List<EnrollmentAdminResponse> getEnrollmentsForCourse(Long courseId) {
         Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new RuntimeException("Course not found"));
-        return enrollmentRepository.findByCourse(course);
+                .orElseThrow(() -> ApiException.notFound("Course not found"));
+
+        return enrollmentRepository.findByCourse(course).stream()
+                .map(EnrollmentAdminResponse::from)
+                .toList();
     }
 
-    // Update progress
-    public Enrollment updateProgress(Long enrollmentId, int progress) {
+    public EnrollmentResponse updateProgress(AuthUser currentUser, Long enrollmentId, int progress) {
         Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
-                .orElseThrow(() -> new RuntimeException("Enrollment not found"));
+                .orElseThrow(() -> ApiException.notFound("Enrollment not found"));
+
+        currentUser.requireOwnerOrAdmin(enrollment.getUser().getId(), "You can only access your own enrollments");
+
         enrollment.setProgress(progress);
-        if (progress >= 100) {
-            enrollment.setStatus("Completed");
-        }
-        return enrollmentRepository.save(enrollment);
+        enrollment.setStatus(progress >= 100 ? STATUS_COMPLETED : STATUS_IN_PROGRESS);
+
+        return EnrollmentResponse.from(enrollmentRepository.save(enrollment));
     }
+
 }

@@ -1,68 +1,75 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import '../styles/admin/ManageCertificates.css';
+
+const formatDate = (isoString) =>
+  new Date(isoString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const ManageCertificates = () => {
 
-  const navigate = useNavigate();
+  const [certificates, setCertificates] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
-  const [certificates, setCertificates] = useState([
-    { id: 'TS-2024-001', student: 'Hari Preyadharshan', email: 'hari@example.com', course: 'Java Programming', score: '92%', grade: 'Distinction', date: 'June 12, 2024', status: 'Valid' },
-    { id: 'TS-2024-002', student: 'Rahul Kumar', email: 'rahul@example.com', course: 'React JS', score: '85%', grade: 'Merit', date: 'June 10, 2024', status: 'Valid' },
-    { id: 'TS-2024-003', student: 'Priya Sharma', email: 'priya@example.com', course: 'Spring Boot', score: '78%', grade: 'Pass', date: 'June 8, 2024', status: 'Valid' },
-    { id: 'TS-2024-004', student: 'Vikram Nair', email: 'vikram@example.com', course: 'PostgreSQL', score: '88%', grade: 'Merit', date: 'June 5, 2024', status: 'Revoked' },
-  ]);
+  useEffect(() => {
+    apiFetch('/api/certificates')
+      .then(res => res.json())
+      .then(data => {
+        setCertificates(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching certificates:', err);
+        setLoading(false);
+      });
+  }, []);
 
   const [search, setSearch] = useState('');
   const [verifyId, setVerifyId] = useState('');
   const [verifyResult, setVerifyResult] = useState(null);
+  const [verifyNotFound, setVerifyNotFound] = useState(false);
 
   const filtered = certificates.filter(c =>
-    c.student.toLowerCase().includes(search.toLowerCase()) ||
-    c.id.toLowerCase().includes(search.toLowerCase()) ||
-    c.course.toLowerCase().includes(search.toLowerCase())
+    c.studentName.toLowerCase().includes(search.toLowerCase()) ||
+    c.certificateCode.toLowerCase().includes(search.toLowerCase()) ||
+    c.courseName.toLowerCase().includes(search.toLowerCase())
   );
 
-  const handleRevoke = (id) => {
-    if (window.confirm('Are you sure you want to revoke this certificate?')) {
-      setCertificates(certificates.map(c =>
-        c.id === id ? { ...c, status: 'Revoked' } : c
-      ));
+  const handleRevoke = async (id) => {
+    if (!window.confirm('Are you sure you want to revoke this certificate?')) return;
+    try {
+      const response = await apiFetch(`/api/certificates/${id}/revoke`, { method: 'PUT' });
+      if (!response.ok) throw new Error('Revoke failed');
+      const updated = await response.json();
+      setCertificates(certificates.map(c => (c.id === id ? updated : c)));
+    } catch (error) {
+      console.error('Error revoking certificate:', error);
+      alert('Failed to revoke certificate. Please try again.');
     }
   };
 
-  const handleVerify = (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    const found = certificates.find(c => c.id === verifyId);
-    setVerifyResult(found || null);
+    setVerifyResult(null);
+    setVerifyNotFound(false);
+    try {
+      const response = await apiFetch(`/api/certificates/${verifyId}`);
+      if (response.ok) {
+        setVerifyResult(await response.json());
+      } else {
+        setVerifyNotFound(true);
+      }
+    } catch (error) {
+      console.error('Error verifying certificate:', error);
+      setVerifyNotFound(true);
+    }
   };
 
   return (
     <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link active">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -78,7 +85,7 @@ const ManageCertificates = () => {
           <form className="verify-form" onSubmit={handleVerify}>
             <input
               type="text"
-              placeholder="Enter Certificate ID (e.g. TS-2024-001)"
+              placeholder="Enter Certificate ID (e.g. TS-2026-001)"
               value={verifyId}
               onChange={(e) => setVerifyId(e.target.value)}
               required
@@ -86,15 +93,15 @@ const ManageCertificates = () => {
             <button type="submit" className="btn-verify">Verify</button>
           </form>
 
-          {verifyResult !== null && (
+          {(verifyResult || verifyNotFound) && (
             <div className={`verify-result ${verifyResult ? verifyResult.status.toLowerCase() : 'notfound'}`}>
               {verifyResult ? (
                 <>
-                  <span className="verify-icon">{verifyResult.status === 'Valid' ? '✅' : '❌'}</span>
+                  <span className="verify-icon">{verifyResult.status === 'VALID' ? '✅' : '❌'}</span>
                   <div>
-                    <h4>{verifyResult.status === 'Valid' ? 'Certificate is Valid!' : 'Certificate has been Revoked!'}</h4>
-                    <p><strong>{verifyResult.student}</strong> — {verifyResult.course} — {verifyResult.score}</p>
-                    <p>Issued on: {verifyResult.date}</p>
+                    <h4>{verifyResult.status === 'VALID' ? 'Certificate is Valid!' : 'Certificate has been Revoked!'}</h4>
+                    <p><strong>{verifyResult.studentName}</strong> — {verifyResult.courseName} — {verifyResult.score}%</p>
+                    <p>Issued on: {formatDate(verifyResult.issuedAt)}</p>
                   </div>
                 </>
               ) : (
@@ -123,63 +130,67 @@ const ManageCertificates = () => {
         </div>
 
         {/* Certificates Table */}
-        <div className="admin-section">
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Certificate ID</th>
-                  <th>Student</th>
-                  <th>Course</th>
-                  <th>Score</th>
-                  <th>Grade</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((cert) => (
-                  <tr key={cert.id}>
-                    <td className="cert-id">{cert.id}</td>
-                    <td>
-                      <div className="student-info">
-                        <span className="student-avatar">👤</span>
-                        <div>
-                          <p className="student-name">{cert.student}</p>
-                          <p className="student-email">{cert.email}</p>
-                        </div>
-                      </div>
-                    </td>
-                    <td>{cert.course}</td>
-                    <td><strong>{cert.score}</strong></td>
-                    <td>
-                      <span className={`grade-badge ${cert.grade.toLowerCase()}`}>
-                        {cert.grade}
-                      </span>
-                    </td>
-                    <td>{cert.date}</td>
-                    <td>
-                      <span className={`status-badge ${cert.status.toLowerCase()}`}>
-                        {cert.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <Link to={`/certificate/${cert.id}`} className="btn-view">👁️ View</Link>
-                        {cert.status === 'Valid' && (
-                          <button className="btn-delete" onClick={() => handleRevoke(cert.id)}>
-                            🚫 Revoke
-                          </button>
-                        )}
-                      </div>
-                    </td>
+        {loading && <p style={{ padding: '2rem' }}>Loading certificates...</p>}
+
+        {!loading && (
+          <div className="admin-section">
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>Certificate ID</th>
+                    <th>Student</th>
+                    <th>Course</th>
+                    <th>Score</th>
+                    <th>Grade</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {filtered.map((cert) => (
+                    <tr key={cert.id}>
+                      <td className="cert-id">{cert.certificateCode}</td>
+                      <td>
+                        <div className="student-info">
+                          <span className="student-avatar">👤</span>
+                          <div>
+                            <p className="student-name">{cert.studentName}</p>
+                            <p className="student-email">{cert.studentEmail}</p>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{cert.courseName}</td>
+                      <td><strong>{cert.score}%</strong></td>
+                      <td>
+                        <span className={`grade-badge ${cert.grade.toLowerCase()}`}>
+                          {cert.grade}
+                        </span>
+                      </td>
+                      <td>{formatDate(cert.issuedAt)}</td>
+                      <td>
+                        <span className={`status-badge ${cert.status.toLowerCase()}`}>
+                          {cert.status === 'VALID' ? 'Valid' : 'Revoked'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <Link to={`/certificate/${cert.certificateCode}`} className="btn-view">👁️ View</Link>
+                          {cert.status === 'VALID' && (
+                            <button className="btn-delete" onClick={() => handleRevoke(cert.id)}>
+                              🚫 Revoke
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>

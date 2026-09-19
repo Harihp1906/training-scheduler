@@ -10,6 +10,23 @@
   background: linear-gradient(135deg, #2D6A4F, #52B788);
   padding: 60px;
   color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 40px;
+}
+
+.coursedetail-info {
+  flex: 1;
+}
+
+.coursedetail-thumbnail {
+  width: 340px;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  border-radius: 16px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.25);
+  flex-shrink: 0;
 }
 
 .coursedetail-info h1 {
@@ -200,4 +217,40 @@
 
 .btn-exam:hover {
   background-color: var(--primary-light);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .coursedetail-content {
+    grid-template-columns: 1fr;
+    padding: 0 20px;
+  }
+
+  .side-card {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .coursedetail-header {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 40px 24px;
+    text-align: center;
+  }
+
+  .coursedetail-thumbnail {
+    width: 100%;
+    order: -1;
+  }
+
+  .coursedetail-info h1 {
+    font-size: 26px;
+  }
+
+  .coursedetail-meta {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px 20px;
+  }
 }

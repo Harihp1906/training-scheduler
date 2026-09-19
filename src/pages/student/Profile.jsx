@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import StudentSidebar from '../../components/student/StudentSidebar';
 import '../styles/student/Profile.css';
 
 const Profile = () => {
@@ -16,12 +17,6 @@ const Profile = () => {
     setUser(storedUser);
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   // No backend endpoint for updating profile yet — form is read-only for now.
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -36,21 +31,7 @@ const Profile = () => {
   return (
     <div className="dashboard-page">
 
-      {/* Sidebar */}
-      <div className="dashboard-sidebar">
-        <div className="sidebar-profile">
-          <div className="sidebar-avatar">👨‍🎓</div>
-          <h3>{user.fullName}</h3>
-          <p>{user.role || 'Student'}</p>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-link">🏠 Dashboard</Link>
-          <Link to="/my-courses" className="sidebar-link">📚 My Courses</Link>
-          <Link to="/courses" className="sidebar-link">🔍 Browse Courses</Link>
-          <Link to="/profile" className="sidebar-link active">👤 Profile</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <StudentSidebar user={user} />
 
       {/* Main Content */}
       <div className="dashboard-main">

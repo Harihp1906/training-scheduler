@@ -1,8 +1,12 @@
 package com.training.trainingscheduler.controller;
 
-import com.training.trainingscheduler.entity.Course;
+import com.training.trainingscheduler.dto.CourseRequest;
+import com.training.trainingscheduler.dto.CourseResponse;
+import com.training.trainingscheduler.security.AuthUser;
 import com.training.trainingscheduler.service.CourseService;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,43 +15,43 @@ import java.util.List;
 @RequestMapping("/api/courses")
 public class CourseController {
 
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
 
-    // GET all courses (admin)
-    @GetMapping("/all")
-    public List<Course> getAllCourses() {
-        return courseService.getAllCourses();
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
     }
 
-    // GET active courses only (students)
+    // Active courses only -- public catalog
     @GetMapping
-    public List<Course> getActiveCourses() {
+    public List<CourseResponse> getActiveCourses() {
         return courseService.getActiveCourses();
     }
 
-    // GET single course by ID
+    // All courses regardless of status -- admin management view
+    @GetMapping("/all")
+    public List<CourseResponse> getAllCourses() {
+        return courseService.getAllCourses();
+    }
+
     @GetMapping("/{id}")
-    public Course getCourseById(@PathVariable Long id) {
-        return courseService.getCourseById(id);
+    public CourseResponse getCourseById(@PathVariable Long id, @AuthenticationPrincipal AuthUser currentUser) {
+        return courseService.getCourseById(id, currentUser);
     }
 
-    // POST create new course (admin)
     @PostMapping
-    public Course createCourse(@RequestBody Course course) {
-        return courseService.createCourse(course);
+    public ResponseEntity<CourseResponse> createCourse(@Valid @RequestBody CourseRequest request) {
+        return ResponseEntity.status(201).body(courseService.createCourse(request));
     }
 
-    // PUT update course (admin)
     @PutMapping("/{id}")
-    public Course updateCourse(@PathVariable Long id, @RequestBody Course course) {
-        return courseService.updateCourse(id, course);
+    public CourseResponse updateCourse(@PathVariable Long id, @Valid @RequestBody CourseRequest request) {
+        return courseService.updateCourse(id, request);
     }
 
-    // DELETE course (admin)
     @DeleteMapping("/{id}")
-    public String deleteCourse(@PathVariable Long id) {
-        return courseService.deleteCourse(id);
+    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

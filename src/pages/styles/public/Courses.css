@@ -88,94 +88,9 @@
   margin: 0 auto;
 }
 
-/* Course Card */
-.course-card {
-  background-color: var(--white);
-  border-radius: 16px;
-  padding: 30px;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-  transition: transform 0.3s;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.course-card:hover {
-  transform: translateY(-6px);
-}
-
-.course-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.course-category {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--primary);
-  background-color: #d8f3dc;
-  padding: 4px 12px;
-  border-radius: 50px;
-}
-
-.course-level {
-  font-size: 12px;
-  font-weight: 600;
-  padding: 4px 12px;
-  border-radius: 50px;
-}
-
-.course-level.beginner {
-  background-color: #d8f3dc;
-  color: #2D6A4F;
-}
-
-.course-level.intermediate {
-  background-color: #fff3cd;
-  color: #856404;
-}
-
-.course-level.advanced {
-  background-color: #f8d7da;
-  color: #842029;
-}
-
-.course-card h3 {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.course-card p {
-  font-size: 14px;
-  color: var(--grey);
-  line-height: 1.7;
-}
-
-.course-meta {
-  display: flex;
-  gap: 16px;
-  font-size: 13px;
-  color: var(--grey);
-}
-
-.btn-enroll {
-  display: block;
-  text-align: center;
-  background-color: var(--primary);
-  color: var(--white);
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 15px;
-  transition: background-color 0.3s;
-  margin-top: auto;
-}
-
-.btn-enroll:hover {
-  background-color: var(--primary-light);
-}
+/* Course card styling now lives in components/styles/student/CourseCard.css,
+   loaded by <CourseCard />. .course-category / .course-level live in
+   index.css (shared with CourseDetail/MyCourses). */
 
 /* No courses */
 .no-courses {
@@ -184,4 +99,35 @@
   color: var(--grey);
   font-size: 16px;
   grid-column: 1 / -1;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .courses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .courses-page {
+    padding: 30px 20px;
+  }
+
+  .courses-header h1 {
+    font-size: 28px;
+  }
+
+  .courses-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .courses-search {
+    width: 100%;
+  }
+
+  .courses-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
 }

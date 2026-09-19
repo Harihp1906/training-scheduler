@@ -166,3 +166,94 @@
   color: var(--error);
   animation: pulse 0.5s infinite;
 }
+
+/* Result screen -- previously had no CSS anywhere (not a load-order issue,
+   just genuinely missing). .exam-result-wrapper centers the card on the
+   dark .exam-page background; .exam-result is the card itself. */
+.exam-result-wrapper {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.exam-result {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 60px 40px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.exam-result h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 16px;
+}
+
+.exam-result .btn-certificate {
+  background-color: var(--primary);
+  color: var(--white);
+  padding: 14px 32px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s;
+}
+
+.exam-result .btn-certificate:hover {
+  background-color: var(--primary-light);
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 900px) {
+  .exam-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .camera-box {
+    flex-direction: row;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .camera-feed {
+    width: 160px;
+  }
+
+  .warnings-display {
+    flex: 1;
+    min-width: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  .exam-container {
+    padding: 24px 20px;
+  }
+
+  .camera-box {
+    flex-direction: column;
+  }
+
+  .camera-feed {
+    width: 100%;
+  }
+
+  .exam-header {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .warning-banner {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+    padding: 12px 16px;
+  }
+}

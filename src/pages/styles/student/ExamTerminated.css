@@ -142,3 +142,13 @@
 .btn-contact-support:hover {
   background-color: #f0faf4;
 }
+
+@media (max-width: 480px) {
+  .terminated-container {
+    padding: 36px 24px;
+  }
+
+  .terminated-actions {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,26 @@
+# Copy this file to application.properties (same directory) and fill in real
+# local values, OR just export these as environment variables before running
+# the app -- application.properties itself never contains real secrets and is
+# gitignored.
+
+# --- Database (PostgreSQL on localhost) ---
+DATABASE_URL=jdbc:postgresql://localhost:5432/training_scheduler
+DATABASE_USERNAME=postgres
+DATABASE_PASSWORD=change-me
+
+# --- JWT ---
+# Must be a long, random string (32+ bytes). Generate one with:
+#   openssl rand -base64 48
+JWT_SECRET=replace-with-a-long-random-secret
+JWT_EXPIRATION_MS=86400000
+
+# --- Server ---
+PORT=8080
+CORS_ORIGIN=http://localhost:3000
+
+# --- Seed data (creates 1 admin + sample students/courses on first run) ---
+# Logging in with these exact credentials lands on the admin panel -- role,
+# not a separate login page, is what routes admins vs. students.
+SEED_ENABLED=true
+SEED_ADMIN_EMAIL=admin@gmail.com
+SEED_ADMIN_PASSWORD=admin@123

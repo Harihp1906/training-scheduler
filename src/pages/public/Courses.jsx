@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import CourseCard from '../../components/student/CourseCard';
 import '../styles/public/Courses.css';
 
 const Courses = () => {
@@ -71,21 +71,7 @@ const Courses = () => {
         <div className="courses-grid">
           {filtered.length > 0 ? (
             filtered.map(course => (
-              <div className="course-card" key={course.id}>
-                <div className="course-card-top">
-                  <span className="course-category">{course.category}</span>
-                  <span className={`course-level ${course.level.toLowerCase()}`}>{course.level}</span>
-                </div>
-                <h3>{course.title}</h3>
-                <p>{course.description}</p>
-                <div className="course-meta">
-                  <span>📅 {course.duration}</span>
-                  <span>📚 {course.totalLessons} lessons</span>
-                </div>
-                <Link to={`/course/${course.id}`} className="btn-enroll">
-                  View Course
-                </Link>
-              </div>
+              <CourseCard course={course} key={course.id} />
             ))
           ) : (
             <div className="no-courses">

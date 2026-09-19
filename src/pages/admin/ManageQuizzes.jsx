@@ -1,72 +1,183 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import '../styles/admin/ManageQuizzes.css';
+
+const emptyQuestion = () => ({ text: '', options: ['', ''], correctIndex: 0 });
+
+const emptyForm = () => ({
+  courseId: '',
+  type: 'PRACTICE',
+  chapter: '',
+  timeLimitSeconds: 30,
+  passScorePercent: 70,
+  status: 'ACTIVE',
+  questions: [emptyQuestion()],
+});
+
+const TYPE_LABELS = { PRACTICE: 'Practice Quiz', FINAL_EXAM: 'Final Exam' };
 
 const ManageQuizzes = () => {
 
-  const navigate = useNavigate();
+  const [quizzes, setQuizzes] = useState([]);
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
+  const [showModal, setShowModal] = useState(false);
+  const [editingId, setEditingId] = useState(null);
+  const [formData, setFormData] = useState(emptyForm());
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const loadData = () => {
+    setLoading(true);
+    Promise.all([
+      apiFetch('/api/admin/quizzes').then(res => res.json()),
+      apiFetch('/api/courses/all').then(res => res.json()),
+    ])
+      .then(([quizData, courseData]) => {
+        setQuizzes(quizData);
+        setCourses(courseData);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching quizzes:', err);
+        setLoading(false);
+      });
   };
 
-  const [quizzes, setQuizzes] = useState([
-    { id: 1, course: 'Java Programming', chapter: 'Introduction to Java', questions: 5, timeLimit: 30, passScore: 70, attempts: 145, status: 'Active' },
-    { id: 2, course: 'Java Programming', chapter: 'Java Basics', questions: 8, timeLimit: 30, passScore: 70, attempts: 120, status: 'Active' },
-    { id: 3, course: 'Spring Boot', chapter: 'Introduction to Spring', questions: 6, timeLimit: 30, passScore: 70, attempts: 98, status: 'Active' },
-    { id: 4, course: 'React JS', chapter: 'React Basics', questions: 7, timeLimit: 30, passScore: 70, attempts: 200, status: 'Active' },
-    { id: 5, course: 'PostgreSQL', chapter: 'SQL Basics', questions: 10, timeLimit: 30, passScore: 70, attempts: 75, status: 'Inactive' },
-  ]);
+  const openCreateModal = () => {
+    setEditingId(null);
+    setFormData(emptyForm());
+    setShowModal(true);
+  };
 
-  const [showAddQuiz, setShowAddQuiz] = useState(false);
-  const [newQuiz, setNewQuiz] = useState({
-    course: '',
-    chapter: '',
-    questions: '',
-    timeLimit: 30,
-    passScore: 70
-  });
+  const openEditModal = (quiz) => {
+    setEditingId(quiz.id);
+    setFormData({
+      courseId: String(quiz.courseId),
+      type: quiz.type,
+      chapter: quiz.chapter,
+      timeLimitSeconds: quiz.timeLimitSeconds,
+      passScorePercent: quiz.passScorePercent,
+      status: quiz.status,
+      questions: quiz.questions.map(q => ({ text: q.text, options: [...q.options], correctIndex: q.correctIndex })),
+    });
+    setShowModal(true);
+  };
 
-  const handleDelete = (id) => {
-    if (window.confirm('Are you sure you want to delete this quiz?')) {
+  const closeModal = () => {
+    setShowModal(false);
+    setEditingId(null);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Are you sure you want to delete this quiz?')) return;
+    try {
+      const response = await apiFetch(`/api/admin/quizzes/${id}`, { method: 'DELETE' });
+      if (!response.ok) throw new Error('Delete failed');
       setQuizzes(quizzes.filter(q => q.id !== id));
+    } catch (error) {
+      console.error('Error deleting quiz:', error);
+      alert('Failed to delete quiz. Please try again.');
     }
   };
 
-  const handleAddQuiz = (e) => {
+  // ---- question editing helpers ----
+
+  const updateQuestion = (qIndex, field, value) => {
+    const updated = [...formData.questions];
+    updated[qIndex] = { ...updated[qIndex], [field]: value };
+    setFormData({ ...formData, questions: updated });
+  };
+
+  const updateOption = (qIndex, oIndex, value) => {
+    const updated = [...formData.questions];
+    const options = [...updated[qIndex].options];
+    options[oIndex] = value;
+    updated[qIndex] = { ...updated[qIndex], options };
+    setFormData({ ...formData, questions: updated });
+  };
+
+  const setCorrectOption = (qIndex, oIndex) => {
+    updateQuestion(qIndex, 'correctIndex', oIndex);
+  };
+
+  const addOption = (qIndex) => {
+    const updated = [...formData.questions];
+    updated[qIndex] = { ...updated[qIndex], options: [...updated[qIndex].options, ''] };
+    setFormData({ ...formData, questions: updated });
+  };
+
+  const removeOption = (qIndex, oIndex) => {
+    const updated = [...formData.questions];
+    const question = updated[qIndex];
+    if (question.options.length <= 2) return;
+    const options = question.options.filter((_, i) => i !== oIndex);
+    const correctIndex = question.correctIndex === oIndex ? 0 : (question.correctIndex > oIndex ? question.correctIndex - 1 : question.correctIndex);
+    updated[qIndex] = { ...question, options, correctIndex };
+    setFormData({ ...formData, questions: updated });
+  };
+
+  const addQuestion = () => {
+    setFormData({ ...formData, questions: [...formData.questions, emptyQuestion()] });
+  };
+
+  const removeQuestion = (qIndex) => {
+    if (formData.questions.length <= 1) return;
+    setFormData({ ...formData, questions: formData.questions.filter((_, i) => i !== qIndex) });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setQuizzes([...quizzes, {
-      id: quizzes.length + 1,
-      ...newQuiz,
-      attempts: 0,
-      status: 'Active'
-    }]);
-    setShowAddQuiz(false);
-    setNewQuiz({ course: '', chapter: '', questions: '', timeLimit: 30, passScore: 70 });
+    setSubmitting(true);
+
+    const payload = {
+      courseId: Number(formData.courseId),
+      type: formData.type,
+      chapter: formData.chapter,
+      timeLimitSeconds: Number(formData.timeLimitSeconds),
+      passScorePercent: Number(formData.passScorePercent),
+      status: formData.status,
+      questions: formData.questions.map(q => ({
+        text: q.text,
+        options: q.options,
+        correctIndex: q.correctIndex,
+      })),
+    };
+
+    try {
+      const url = editingId ? `/api/admin/quizzes/${editingId}` : '/api/admin/quizzes';
+      const method = editingId ? 'PUT' : 'POST';
+      const response = await apiFetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Request failed');
+
+      if (editingId) {
+        setQuizzes(quizzes.map(q => (q.id === editingId ? data : q)));
+      } else {
+        setQuizzes([...quizzes, data]);
+      }
+      closeModal();
+    } catch (error) {
+      console.error('Error saving quiz:', error);
+      alert(error.message || 'Something went wrong. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
     <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link active">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -77,100 +188,218 @@ const ManageQuizzes = () => {
               <h1>Manage Quizzes</h1>
               <p>Create and manage quizzes for each course chapter</p>
             </div>
-            <button className="btn-add-course" onClick={() => setShowAddQuiz(true)}>
+            <button className="btn-add-course" onClick={openCreateModal}>
               ➕ Add New Quiz
             </button>
           </div>
         </div>
 
-        {/* Add Quiz Modal */}
-        {showAddQuiz && (
-          <div className="modal-overlay" onClick={() => setShowAddQuiz(false)}>
-            <div className="quiz-modal" onClick={(e) => e.stopPropagation()}>
+        {/* Add/Edit Quiz Modal */}
+        {showModal && (
+          <div className="modal-overlay" onClick={closeModal}>
+            <div className="quiz-modal quiz-modal-large" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
-                <h2>Add New Quiz</h2>
-                <button className="modal-close" onClick={() => setShowAddQuiz(false)}>✕</button>
+                <h2>{editingId ? 'Edit Quiz' : 'Add New Quiz'}</h2>
+                <button className="modal-close" onClick={closeModal}>✕</button>
               </div>
-              <form onSubmit={handleAddQuiz} className="quiz-form">
-                <div className="form-group">
-                  <label>Course</label>
-                  <select value={newQuiz.course} onChange={(e) => setNewQuiz({ ...newQuiz, course: e.target.value })} required>
-                    <option value="">Select Course</option>
-                    <option value="Java Programming">Java Programming</option>
-                    <option value="Spring Boot">Spring Boot</option>
-                    <option value="React JS">React JS</option>
-                    <option value="PostgreSQL">PostgreSQL</option>
-                  </select>
+              <form onSubmit={handleSubmit} className="quiz-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Course</label>
+                    <select
+                      value={formData.courseId}
+                      onChange={(e) => setFormData({ ...formData, courseId: e.target.value })}
+                      required
+                    >
+                      <option value="">Select Course</option>
+                      {courses.map(course => (
+                        <option key={course.id} value={course.id}>{course.title}</option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="form-group">
+                    <label>Type</label>
+                    <select
+                      value={formData.type}
+                      onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                      required
+                    >
+                      <option value="PRACTICE">Practice Quiz</option>
+                      <option value="FINAL_EXAM">Final Exam</option>
+                    </select>
+                  </div>
                 </div>
+
                 <div className="form-group">
-                  <label>Chapter</label>
-                  <input type="text" placeholder="Enter chapter name" value={newQuiz.chapter} onChange={(e) => setNewQuiz({ ...newQuiz, chapter: e.target.value })} required />
+                  <label>Chapter / Label</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Introduction to Java"
+                    value={formData.chapter}
+                    onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
+                    required
+                  />
                 </div>
-                <div className="form-group">
-                  <label>Number of Questions</label>
-                  <input type="number" placeholder="Enter number of questions" value={newQuiz.questions} onChange={(e) => setNewQuiz({ ...newQuiz, questions: e.target.value })} required />
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label>Time Limit (seconds per question)</label>
+                    <input
+                      type="number"
+                      min="5"
+                      value={formData.timeLimitSeconds}
+                      onChange={(e) => setFormData({ ...formData, timeLimitSeconds: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Pass Score (%)</label>
+                    <input
+                      type="number"
+                      min="1"
+                      max="100"
+                      value={formData.passScorePercent}
+                      onChange={(e) => setFormData({ ...formData, passScorePercent: e.target.value })}
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label>Status</label>
+                    <select
+                      value={formData.status}
+                      onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    >
+                      <option value="ACTIVE">Active</option>
+                      <option value="INACTIVE">Inactive</option>
+                    </select>
+                  </div>
                 </div>
-                <div className="form-group">
-                  <label>Time Limit (seconds per question)</label>
-                  <input type="number" value={newQuiz.timeLimit} onChange={(e) => setNewQuiz({ ...newQuiz, timeLimit: e.target.value })} required />
+
+                {/* Questions */}
+                <div className="questions-section">
+                  <div className="questions-section-header">
+                    <h3>Questions</h3>
+                    <button type="button" className="btn-add-question" onClick={addQuestion}>
+                      ➕ Add Question
+                    </button>
+                  </div>
+
+                  {formData.questions.map((question, qIndex) => (
+                    <div className="question-editor" key={qIndex}>
+                      <div className="question-editor-header">
+                        <h4>Question {qIndex + 1}</h4>
+                        {formData.questions.length > 1 && (
+                          <button type="button" className="btn-remove-question" onClick={() => removeQuestion(qIndex)}>
+                            🗑️ Remove
+                          </button>
+                        )}
+                      </div>
+
+                      <div className="form-group">
+                        <input
+                          type="text"
+                          placeholder="Enter question text"
+                          value={question.text}
+                          onChange={(e) => updateQuestion(qIndex, 'text', e.target.value)}
+                          required
+                        />
+                      </div>
+
+                      <p className="options-hint">Select the correct answer:</p>
+                      {question.options.map((option, oIndex) => (
+                        <div className="option-row" key={oIndex}>
+                          <input
+                            type="radio"
+                            name={`correct-${qIndex}`}
+                            checked={question.correctIndex === oIndex}
+                            onChange={() => setCorrectOption(qIndex, oIndex)}
+                          />
+                          <input
+                            type="text"
+                            placeholder={`Option ${String.fromCharCode(65 + oIndex)}`}
+                            value={option}
+                            onChange={(e) => updateOption(qIndex, oIndex, e.target.value)}
+                            required
+                          />
+                          {question.options.length > 2 && (
+                            <button
+                              type="button"
+                              className="btn-remove-option"
+                              onClick={() => removeOption(qIndex, oIndex)}
+                            >
+                              ✕
+                            </button>
+                          )}
+                        </div>
+                      ))}
+                      <button type="button" className="btn-add-option" onClick={() => addOption(qIndex)}>
+                        ➕ Add Option
+                      </button>
+                    </div>
+                  ))}
                 </div>
-                <div className="form-group">
-                  <label>Pass Score (%)</label>
-                  <input type="number" value={newQuiz.passScore} onChange={(e) => setNewQuiz({ ...newQuiz, passScore: e.target.value })} required />
-                </div>
+
                 <div className="modal-actions">
-                  <button type="button" className="btn-cancel" onClick={() => setShowAddQuiz(false)}>Cancel</button>
-                  <button type="submit" className="btn-create">Create Quiz</button>
+                  <button type="button" className="btn-cancel" onClick={closeModal}>Cancel</button>
+                  <button type="submit" className="btn-create" disabled={submitting}>
+                    {submitting ? 'Saving...' : editingId ? 'Save Changes' : 'Create Quiz'}
+                  </button>
                 </div>
               </form>
             </div>
           </div>
         )}
 
+        {loading && <p style={{ padding: '2rem' }}>Loading quizzes...</p>}
+
         {/* Quizzes Table */}
-        <div className="admin-section">
-          <div className="admin-table-wrapper">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Course</th>
-                  <th>Chapter</th>
-                  <th>Questions</th>
-                  <th>Time Limit</th>
-                  <th>Pass Score</th>
-                  <th>Attempts</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {quizzes.map((quiz, index) => (
-                  <tr key={quiz.id}>
-                    <td>{index + 1}</td>
-                    <td className="course-title-cell">{quiz.course}</td>
-                    <td>{quiz.chapter}</td>
-                    <td>{quiz.questions}</td>
-                    <td>{quiz.timeLimit}s</td>
-                    <td>{quiz.passScore}%</td>
-                    <td>{quiz.attempts}</td>
-                    <td>
-                      <span className={`status-badge ${quiz.status.toLowerCase()}`}>
-                        {quiz.status}
-                      </span>
-                    </td>
-                    <td>
-                      <div className="action-buttons">
-                        <button className="btn-edit">✏️ Edit</button>
-                        <button className="btn-delete" onClick={() => handleDelete(quiz.id)}>🗑️ Delete</button>
-                      </div>
-                    </td>
+        {!loading && (
+          <div className="admin-section">
+            <div className="admin-table-wrapper">
+              <table className="admin-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Course</th>
+                    <th>Chapter</th>
+                    <th>Type</th>
+                    <th>Questions</th>
+                    <th>Time Limit</th>
+                    <th>Pass Score</th>
+                    <th>Attempts</th>
+                    <th>Status</th>
+                    <th>Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {quizzes.map((quiz, index) => (
+                    <tr key={quiz.id}>
+                      <td>{index + 1}</td>
+                      <td className="course-title-cell">{quiz.courseTitle}</td>
+                      <td>{quiz.chapter}</td>
+                      <td>{TYPE_LABELS[quiz.type] || quiz.type}</td>
+                      <td>{quiz.questions.length}</td>
+                      <td>{quiz.timeLimitSeconds}s</td>
+                      <td>{quiz.passScorePercent}%</td>
+                      <td>{quiz.attempts}</td>
+                      <td>
+                        <span className={`status-badge ${quiz.status.toLowerCase()}`}>
+                          {quiz.status === 'ACTIVE' ? 'Active' : 'Inactive'}
+                        </span>
+                      </td>
+                      <td>
+                        <div className="action-buttons">
+                          <button className="btn-edit" onClick={() => openEditModal(quiz)}>✏️ Edit</button>
+                          <button className="btn-delete" onClick={() => handleDelete(quiz.id)}>🗑️ Delete</button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        )}
 
       </div>
     </div>

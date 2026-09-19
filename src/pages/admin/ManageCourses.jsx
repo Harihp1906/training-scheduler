@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import '../styles/admin/ManageCourses.css';
 
 const ManageCourses = () => {
-
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,23 +38,7 @@ const ManageCourses = () => {
   return (
     <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link active">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -88,6 +65,7 @@ const ManageCourses = () => {
                 <thead>
                   <tr>
                     <th>#</th>
+                    <th></th>
                     <th>Course Title</th>
                     <th>Category</th>
                     <th>Level</th>
@@ -100,6 +78,13 @@ const ManageCourses = () => {
                   {courses.map((course, index) => (
                     <tr key={course.id}>
                       <td>{index + 1}</td>
+                      <td>
+                        {course.thumbnailUrl ? (
+                          <img src={course.thumbnailUrl} alt="" className="course-row-thumbnail" />
+                        ) : (
+                          <div className="course-row-thumbnail-placeholder">📘</div>
+                        )}
+                      </td>
                       <td className="course-title-cell">{course.title}</td>
                       <td>
                         <span className="category-badge">{course.category}</span>

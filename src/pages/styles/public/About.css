@@ -169,3 +169,56 @@
   font-size: 14px;
   color: var(--grey);
 }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .about-hero {
+    padding: 50px 24px;
+  }
+
+  .about-hero h1 {
+    font-size: 30px;
+  }
+
+  .about-mission {
+    flex-direction: column;
+    gap: 24px;
+    padding: 50px 24px;
+    text-align: center;
+  }
+
+  .mission-placeholder {
+    font-size: 80px;
+  }
+
+  .about-values,
+  .about-team {
+    padding: 50px 24px;
+  }
+
+  .values-grid,
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-stats {
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 40px 24px;
+  }
+
+  .about-stat {
+    flex: 1 1 calc(50% - 16px);
+    padding: 12px;
+  }
+}

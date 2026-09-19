@@ -51,7 +51,7 @@ function App() {
         <Route path="/my-courses" element={<PrivateRoute><MyCourses /></PrivateRoute>} />
         <Route path="/course/:id" element={<CourseDetail />} />
         <Route path="/quiz/:id" element={<Quiz />} />
-        <Route path="/exam/instructions" element={<ExamInstructions />} />
+        <Route path="/exam/instructions/:id" element={<ExamInstructions />} />
         <Route path="/exam/:id" element={<Exam />} />
         <Route path="/exam/terminated" element={<ExamTerminated />} />
         <Route path="/certificate/:id" element={<Certificate />} />

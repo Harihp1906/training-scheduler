@@ -1,12 +1,13 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import '../styles/student/ExamInstructions.css';
 
 const ExamInstructions = () => {
 
   const navigate = useNavigate();
+  const { id } = useParams();
 
   const handleStartExam = () => {
-    navigate('/exam/1');
+    navigate(`/exam/${id}`);
   };
 
   return (

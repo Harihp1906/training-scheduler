@@ -100,3 +100,9 @@
 .register-footer a:hover {
   text-decoration: underline;
 }
+
+@media (max-width: 480px) {
+  .register-card {
+    padding: 36px 24px;
+  }
+}

@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
+import StudentSidebar from '../../components/student/StudentSidebar';
 import '../styles/student/Dashboard.css';
 
 const Dashboard = () => {
   const [enrollments, setEnrollments] = useState([]);
+  const [certificateCount, setCertificateCount] = useState(0);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -17,10 +19,18 @@ const Dashboard = () => {
     }
     setUser(storedUser);
 
-    apiFetch(`/api/enrollments/user/${storedUser.id}`)
-      .then(res => res.json())
-      .then(data => {
-        setEnrollments(data);
+    const parseOrThrow = (res) => {
+      if (!res.ok) throw new Error('Request failed');
+      return res.json();
+    };
+
+    Promise.all([
+      apiFetch(`/api/enrollments/user/${storedUser.id}`).then(parseOrThrow),
+      apiFetch(`/api/certificates/user/${storedUser.id}`).then(parseOrThrow),
+    ])
+      .then(([enrollmentData, certificateData]) => {
+        setEnrollments(enrollmentData);
+        setCertificateCount(certificateData.length);
         setLoading(false);
       })
       .catch(err => {
@@ -32,32 +42,12 @@ const Dashboard = () => {
   const completed = enrollments.filter(e => e.status === 'Completed').length;
   const inProgress = enrollments.filter(e => e.status === 'In Progress').length;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   if (loading) return <div className="dashboard-page"><p style={{padding:'2rem'}}>Loading...</p></div>;
 
   return (
     <div className="dashboard-page">
 
-      {/* Sidebar */}
-      <div className="dashboard-sidebar">
-        <div className="sidebar-profile">
-          <div className="sidebar-avatar">👨‍🎓</div>
-          <h3>{user?.fullName}</h3>
-          <p>Student</p>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-link active">🏠 Dashboard</Link>
-          <Link to="/my-courses" className="sidebar-link">📚 My Courses</Link>
-          <Link to="/courses" className="sidebar-link">🔍 Browse Courses</Link>
-          <Link to="/profile" className="sidebar-link">👤 Profile</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <StudentSidebar user={user} />
 
       {/* Main Content */}
       <div className="dashboard-main">
@@ -83,7 +73,7 @@ const Dashboard = () => {
             <p>In Progress</p>
           </div>
           <div className="dash-stat-card">
-            <h2>0</h2>
+            <h2>{certificateCount}</h2>
             <p>Certificates</p>
           </div>
         </div>

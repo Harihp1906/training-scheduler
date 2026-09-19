@@ -1,51 +1,43 @@
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
+import StatsCard from '../../components/admin/StatsCard';
 import '../styles/admin/AdminDashboard.css';
 
 const AdminDashboard = () => {
 
-  const navigate = useNavigate();
+  const [statsData, setStatsData] = useState(null);
+  const [recentStudents, setRecentStudents] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
+  useEffect(() => {
+    Promise.all([
+      apiFetch('/api/admin/stats').then(res => res.json()),
+      apiFetch('/api/admin/students/recent').then(res => res.json()),
+    ])
+      .then(([statsRes, recentRes]) => {
+        setStatsData(statsRes);
+        setRecentStudents(recentRes);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Error loading admin dashboard:', err);
+        setLoading(false);
+      });
+  }, []);
 
-  const stats = [
-    { title: 'Total Students', value: '1,245', icon: '👨‍🎓' },
-    { title: 'Total Courses', value: '24', icon: '📚' },
-    { title: 'Certificates Issued', value: '856', icon: '🏆' },
-    { title: 'Active Exams', value: '12', icon: '📝' },
-  ];
-
-  const recentStudents = [
-    { id: 1, name: 'Hari Preyadharshan', email: 'hari@example.com', course: 'Java Programming', progress: 75, status: 'Active' },
-    { id: 2, name: 'Priya Sharma', email: 'priya@example.com', course: 'React JS', progress: 50, status: 'Active' },
-    { id: 3, name: 'Rahul Kumar', email: 'rahul@example.com', course: 'Spring Boot', progress: 100, status: 'Completed' },
-    { id: 4, name: 'Anjali Singh', email: 'anjali@example.com', course: 'PostgreSQL', progress: 30, status: 'Active' },
-    { id: 5, name: 'Vikram Nair', email: 'vikram@example.com', course: 'Python Basics', progress: 60, status: 'Active' },
-  ];
+  const stats = statsData ? [
+    { title: 'Total Students', value: statsData.totalStudents, icon: '👨‍🎓' },
+    { title: 'Total Courses', value: statsData.totalCourses, icon: '📚' },
+    { title: 'Certificates Issued', value: statsData.certificatesIssued, icon: '🏆' },
+    { title: 'Active Exams', value: statsData.activeExams, icon: '📝' },
+  ] : [];
 
   return (
     <div className="admin-page">
 
-      {/* Admin Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link active">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -55,18 +47,14 @@ const AdminDashboard = () => {
           <p>Welcome back! Here's what's happening today.</p>
         </div>
 
+        {loading && <p style={{ padding: '2rem' }}>Loading dashboard...</p>}
+
         {/* Stats */}
-        <div className="admin-stats">
+        {!loading && <div className="admin-stats">
           {stats.map((stat, index) => (
-            <div className="admin-stat-card" key={index}>
-              <div className="stat-icon">{stat.icon}</div>
-              <div className="stat-info">
-                <h2>{stat.value}</h2>
-                <p>{stat.title}</p>
-              </div>
-            </div>
+            <StatsCard key={index} icon={stat.icon} value={stat.value} label={stat.title} />
           ))}
-        </div>
+        </div>}
 
         {/* Quick Actions */}
         <div className="admin-quick-actions">
@@ -92,7 +80,7 @@ const AdminDashboard = () => {
         </div>
 
         {/* Recent Students */}
-        <div className="admin-section">
+        {!loading && <div className="admin-section">
           <div className="section-header">
             <h2>Recent Students</h2>
             <Link to="/admin/students" className="view-all">View All →</Link>
@@ -142,7 +130,7 @@ const AdminDashboard = () => {
               </tbody>
             </table>
           </div>
-        </div>
+        </div>}
 
       </div>
     </div>

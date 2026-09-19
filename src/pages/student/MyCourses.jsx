@@ -1,10 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
+import StudentSidebar from '../../components/student/StudentSidebar';
 import '../styles/student/MyCourses.css';
 
 const MyCourses = () => {
   const [enrollments, setEnrollments] = useState([]);
+  const [certificatesByCourse, setCertificatesByCourse] = useState({});
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
@@ -17,10 +19,22 @@ const MyCourses = () => {
     }
     setUser(storedUser);
 
-    apiFetch(`/api/enrollments/user/${storedUser.id}`)
-      .then(res => res.json())
-      .then(data => {
-        setEnrollments(data);
+    const parseOrThrow = (res) => {
+      if (!res.ok) throw new Error('Request failed');
+      return res.json();
+    };
+
+    Promise.all([
+      apiFetch(`/api/enrollments/user/${storedUser.id}`).then(parseOrThrow),
+      apiFetch(`/api/certificates/user/${storedUser.id}`).then(parseOrThrow),
+    ])
+      .then(([enrollmentData, certificateData]) => {
+        setEnrollments(enrollmentData);
+        const byCourse = {};
+        certificateData.forEach(cert => {
+          byCourse[cert.courseId] = cert;
+        });
+        setCertificatesByCourse(byCourse);
         setLoading(false);
       })
       .catch(err => {
@@ -29,32 +43,12 @@ const MyCourses = () => {
       });
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
-
   if (loading) return <div className="dashboard-page"><p style={{padding:'2rem'}}>Loading...</p></div>;
 
   return (
     <div className="dashboard-page">
 
-      {/* Sidebar */}
-      <div className="dashboard-sidebar">
-        <div className="sidebar-profile">
-          <div className="sidebar-avatar">👨‍🎓</div>
-          <h3>{user?.fullName}</h3>
-          <p>Student</p>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/dashboard" className="sidebar-link">🏠 Dashboard</Link>
-          <Link to="/my-courses" className="sidebar-link active">📚 My Courses</Link>
-          <Link to="/courses" className="sidebar-link">🔍 Browse Courses</Link>
-          <Link to="/profile" className="sidebar-link">👤 Profile</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <StudentSidebar user={user} />
 
       {/* Main Content */}
       <div className="dashboard-main">
@@ -68,8 +62,10 @@ const MyCourses = () => {
           {enrollments.length === 0 ? (
             <p>You are not enrolled in any courses yet. <Link to="/courses">Browse courses</Link></p>
           ) : (
-            enrollments.map(enrollment => (
-              <div className="mycourse-card" key={enrollment.id}>
+            enrollments.map(enrollment => {
+              const certificate = certificatesByCourse[enrollment.course.id];
+              return (
+                <div className="mycourse-card" key={enrollment.id}>
 
                 <div className="mycourse-top">
                   <span className="course-category">{enrollment.course.category}</span>
@@ -93,15 +89,16 @@ const MyCourses = () => {
                   <Link to={`/course/${enrollment.course.id}`} className="btn-continue">
                     {enrollment.status === 'Completed' ? 'Review' : 'Continue'}
                   </Link>
-                  {enrollment.status === 'Completed' && (
-                    <Link to={`/certificate/${enrollment.course.id}`} className="btn-certificate">
+                  {certificate && (
+                    <Link to={`/certificate/${certificate.certificateCode}`} className="btn-certificate">
                       🏆 Certificate
                     </Link>
                   )}
                 </div>
 
               </div>
-            ))
+            );
+          })
           )}
         </div>
 

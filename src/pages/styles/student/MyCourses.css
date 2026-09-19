@@ -119,3 +119,20 @@
 .btn-certificate:hover {
   background-color: #ffeaa7;
 }
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .mycourses-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .mycourses-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .mycourse-actions {
+    flex-direction: column;
+  }
+}

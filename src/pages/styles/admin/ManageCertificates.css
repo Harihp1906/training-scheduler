@@ -121,7 +121,23 @@
   color: #856404;
 }
 
+.status-badge.valid {
+  background-color: #d8f3dc;
+  color: var(--primary);
+}
+
 .status-badge.revoked {
   background-color: #fde8e8;
   color: var(--error);
+}
+
+@media (max-width: 480px) {
+  .verify-form {
+    flex-direction: column;
+  }
+
+  .verify-result {
+    flex-direction: column;
+    text-align: center;
+  }
 }

@@ -34,7 +34,11 @@ public class Course {
     @Column(nullable = false)
     private Integer totalLessons;
 
-    @Column(nullable = false)
-    private String status; // "Active" or "Inactive"
+    // Optional -- cards/detail pages fall back to a generated placeholder when absent.
+    private String thumbnailUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private CourseStatus status = CourseStatus.ACTIVE;
 
 }

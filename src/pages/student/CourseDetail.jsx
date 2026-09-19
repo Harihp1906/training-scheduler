@@ -31,6 +31,10 @@ const CourseDetail = () => {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [user] = useState(() => JSON.parse(localStorage.getItem('user')));
+  const [enrollment, setEnrollment] = useState(null);
+  const [enrollmentLoading, setEnrollmentLoading] = useState(true);
+  const [enrolling, setEnrolling] = useState(false);
 
   useEffect(() => {
     apiFetch(`/api/courses/${id}`)
@@ -48,6 +52,49 @@ const CourseDetail = () => {
         setLoading(false);
       });
   }, [id]);
+
+  useEffect(() => {
+    if (!user) {
+      setEnrollmentLoading(false);
+      return;
+    }
+    apiFetch(`/api/enrollments/user/${user.id}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch enrollments');
+        return res.json();
+      })
+      .then(data => {
+        const match = data.find(e => String(e.course.id) === String(id));
+        setEnrollment(match || null);
+        setEnrollmentLoading(false);
+      })
+      .catch(err => {
+        console.error('Error fetching enrollment:', err);
+        setEnrollmentLoading(false);
+      });
+  }, [id, user]);
+
+  const handleEnroll = async () => {
+    setEnrolling(true);
+    try {
+      const response = await apiFetch('/api/enrollments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ courseId: Number(id) }),
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setEnrollment(data);
+      } else {
+        alert(data.message || 'Could not enroll in this course');
+      }
+    } catch (err) {
+      console.error('Error enrolling:', err);
+      alert('Something went wrong. Please try again.');
+    } finally {
+      setEnrolling(false);
+    }
+  };
 
   if (loading) return <div className="coursedetail-page"><p style={{ padding: '2rem' }}>Loading course...</p></div>;
   if (error || !course) return <div className="coursedetail-page"><p style={{ padding: '2rem' }}>Course not found.</p></div>;
@@ -67,6 +114,9 @@ const CourseDetail = () => {
             <span>🎯 {course.level}</span>
           </div>
         </div>
+        {course.thumbnailUrl && (
+          <img src={course.thumbnailUrl} alt={course.title} className="coursedetail-thumbnail" />
+        )}
       </div>
 
       {/* Content */}
@@ -111,19 +161,38 @@ const CourseDetail = () => {
         <div className="coursedetail-side">
           <div className="side-card">
             <h3>Your Progress</h3>
-            <div className="side-progress">
-              <div className="progress-bar">
-                <div className="progress-fill" style={{ width: '75%' }}></div>
-              </div>
-              <span>75%</span>
-            </div>
-            <p>18 of 24 lessons completed</p>
-            <Link to={`/quiz/${id}`} className="btn-quiz">
-              📝 Take Chapter Quiz
-            </Link>
-            <Link to={`/exam/instructions`} className="btn-exam">
-              🎓 Start Final Exam
-            </Link>
+
+            {enrollmentLoading ? (
+              <p>Loading...</p>
+            ) : !user ? (
+              <>
+                <p>Log in to enroll and track your progress in this course.</p>
+                <Link to="/login" className="btn-quiz">🔐 Login to Enroll</Link>
+              </>
+            ) : !enrollment ? (
+              <>
+                <p>You're not enrolled in this course yet.</p>
+                <button className="btn-quiz" onClick={handleEnroll} disabled={enrolling}>
+                  {enrolling ? 'Enrolling...' : '➕ Enroll Now'}
+                </button>
+              </>
+            ) : (
+              <>
+                <div className="side-progress">
+                  <div className="progress-bar">
+                    <div className="progress-fill" style={{ width: `${enrollment.progress}%` }}></div>
+                  </div>
+                  <span>{enrollment.progress}%</span>
+                </div>
+                <p>{enrollment.status}</p>
+                <Link to={`/quiz/${id}`} className="btn-quiz">
+                  📝 Take Chapter Quiz
+                </Link>
+                <Link to={`/exam/instructions/${id}`} className="btn-exam">
+                  🎓 Start Final Exam
+                </Link>
+              </>
+            )}
           </div>
         </div>
 

@@ -1,34 +1,6 @@
-/* ==================== MANAGE STUDENTS PAGE ==================== */
-
-.students-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 20px;
-}
-
-.students-search {
-  padding: 12px 20px;
-  border: 1.5px solid var(--border);
-  border-radius: 50px;
-  font-size: 15px;
-  font-family: 'Inter', sans-serif;
-  outline: none;
-  width: 400px;
-  transition: border 0.3s;
-  background-color: var(--white);
-}
-
-.students-search:focus {
-  border-color: var(--primary);
-}
-
-.students-count {
-  font-size: 14px;
-  color: var(--grey);
-  font-weight: 500;
-}
+/* ==================== MANAGE STUDENTS PAGE ====================
+   .students-toolbar/.students-search/.students-count now live in
+   index.css -- also used as-is by ManageCertificates.jsx. */
 
 .status-badge.blocked {
   background-color: #fde8e8;
@@ -62,20 +34,8 @@
   background-color: #b7e4c7;
 }
 
-/* Modal */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-}
-
+/* Modal shell (.modal-overlay/.modal-header/.modal-close) now lives in
+   index.css, shared with ManageQuizzes/ManageBatches. */
 .student-modal {
   background-color: var(--white);
   border-radius: 20px;
@@ -83,27 +43,6 @@
   width: 100%;
   max-width: 460px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.2);
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.modal-header h2 {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--dark);
-}
-
-.modal-close {
-  background: none;
-  font-size: 20px;
-  color: var(--grey);
-  cursor: pointer;
-  font-family: 'Inter', sans-serif;
 }
 
 .modal-body {

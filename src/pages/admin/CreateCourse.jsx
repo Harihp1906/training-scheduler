@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import AdminSidebar from '../../components/admin/AdminSidebar';
 import '../styles/admin/CreateCourse.css';
 
 const CreateCourse = () => {
@@ -8,12 +9,6 @@ const CreateCourse = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEditMode = Boolean(id);
-
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    navigate('/login');
-  };
 
   const [courseData, setCourseData] = useState({
     title: '',
@@ -40,7 +35,7 @@ const CreateCourse = () => {
           level: data.level || '',
           duration: data.duration || '',
           description: data.description || '',
-          thumbnail: ''
+          thumbnail: data.thumbnailUrl || ''
         });
         setLoadingCourse(false);
       })
@@ -110,6 +105,7 @@ const CreateCourse = () => {
       duration: courseData.duration,
       description: courseData.description,
       totalLessons,
+      thumbnailUrl: courseData.thumbnail || null,
     };
 
     try {
@@ -132,23 +128,7 @@ const CreateCourse = () => {
   return (
     <div className="admin-page">
 
-      {/* Sidebar */}
-      <div className="admin-sidebar">
-        <div className="admin-sidebar-header">
-          <div className="admin-logo">⚙️</div>
-          <h3>Admin Panel</h3>
-        </div>
-        <nav className="sidebar-nav">
-          <Link to="/admin/dashboard" className="sidebar-link">📊 Dashboard</Link>
-          <Link to="/admin/courses" className="sidebar-link active">📚 Manage Courses</Link>
-          <Link to="/admin/students" className="sidebar-link">👨‍🎓 Manage Students</Link>
-          <Link to="/admin/quizzes" className="sidebar-link">📝 Manage Quizzes</Link>
-          <Link to="/admin/certificates" className="sidebar-link">🏆 Certificates</Link>
-          <Link to="/admin/batches" className="sidebar-link">👥 Batches</Link>
-          <Link to="/admin/reports" className="sidebar-link">📈 Reports</Link>
-          <button onClick={handleLogout} className="sidebar-link logout">🚪 Logout</button>
-        </nav>
-      </div>
+      <AdminSidebar />
 
       {/* Main Content */}
       <div className="admin-main">
@@ -234,6 +214,15 @@ const CreateCourse = () => {
                 value={courseData.thumbnail}
                 onChange={handleCourseChange}
               />
+              {courseData.thumbnail && (
+                <img
+                  src={courseData.thumbnail}
+                  alt="Thumbnail preview"
+                  className="thumbnail-preview"
+                  onError={(e) => { e.target.style.display = 'none'; }}
+                  onLoad={(e) => { e.target.style.display = 'block'; }}
+                />
+              )}
             </div>
           </div>
 

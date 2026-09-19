@@ -201,6 +201,39 @@
   letter-spacing: 2px;
 }
 
+@media (max-width: 640px) {
+  .certificate-border {
+    padding: 24px 16px;
+  }
+
+  .certificate-header h1 {
+    font-size: 24px;
+  }
+
+  .cert-name {
+    font-size: 26px;
+  }
+
+  .cert-course {
+    font-size: 18px;
+  }
+
+  .certificate-footer {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .certificate-verify {
+    padding: 24px 20px;
+  }
+
+  .verify-id {
+    padding: 10px 18px;
+    font-size: 15px;
+    word-break: break-all;
+  }
+}
+
 /* Print Styles */
 @media print {
   .no-print {
