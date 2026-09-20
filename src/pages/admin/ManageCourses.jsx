@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/ManageCourses.css';
 
 const ManageCourses = () => {
+  const showToast = useToast();
 
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,7 +33,7 @@ const ManageCourses = () => {
       setCourses(courses.filter(course => course.id !== id));
     } catch (error) {
       console.error('Error deleting course:', error);
-      alert('Failed to delete course. Please try again.');
+      showToast('Failed to delete course. Please try again.', 'error');
     }
   };
 

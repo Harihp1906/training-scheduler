@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/CreateCourse.css';
 
 const CreateCourse = () => {
+  const showToast = useToast();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -117,11 +119,11 @@ const CreateCourse = () => {
 
       if (!response.ok) throw new Error('Request failed');
 
-      alert(isEditMode ? 'Course updated successfully!' : 'Course created successfully!');
+      showToast(isEditMode ? 'Course updated successfully!' : 'Course created successfully!', 'success');
       navigate('/admin/courses');
     } catch (error) {
       console.error('Error saving course:', error);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     }
   };
 

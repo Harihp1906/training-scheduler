@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/student/Exam.css';
 
 const Exam = () => {
+  const showToast = useToast();
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -54,7 +56,7 @@ const Exam = () => {
           setCameraReady(true);
         }
       } catch (err) {
-        alert('Camera access denied! Camera is required for the exam.');
+        showToast('Camera access denied! Camera is required for the exam.', 'error');
         navigate(`/exam/instructions/${id}`);
       }
     };
@@ -66,7 +68,7 @@ const Exam = () => {
         videoEl.srcObject.getTracks().forEach(track => track.stop());
       }
     };
-  }, [id, navigate]);
+  }, [id, navigate, showToast]);
 
   const submitAttempt = useCallback(async (finalAnswers, finalWarnings, terminated) => {
     if (!quiz) return;

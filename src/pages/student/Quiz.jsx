@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/student/Quiz.css';
 
 const Quiz = () => {
+  const showToast = useToast();
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -60,11 +62,11 @@ const Quiz = () => {
         if (response.ok) {
           setResult(data);
         } else {
-          alert(data.message || 'Could not submit quiz');
+          showToast(data.message || 'Could not submit quiz', 'error');
         }
       } catch (err) {
         console.error('Error submitting quiz:', err);
-        alert('Something went wrong. Please try again.');
+        showToast('Something went wrong. Please try again.', 'error');
       } finally {
         setSubmitting(false);
         setQuizFinished(true);

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/student/CourseDetail.css';
 
 // Placeholder chapter/lesson structure — backend has no curriculum model yet,
@@ -25,6 +26,7 @@ const placeholderChapters = [
 ];
 
 const CourseDetail = () => {
+  const showToast = useToast();
 
   const { id } = useParams();
   const [activeChapter, setActiveChapter] = useState(0);
@@ -86,11 +88,11 @@ const CourseDetail = () => {
       if (response.ok) {
         setEnrollment(data);
       } else {
-        alert(data.message || 'Could not enroll in this course');
+        showToast(data.message || 'Could not enroll in this course', 'error');
       }
     } catch (err) {
       console.error('Error enrolling:', err);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     } finally {
       setEnrolling(false);
     }

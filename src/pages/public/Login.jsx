@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/public/Login.css';
 
 const Login = () => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const [formData, setFormData] = useState({
     email: '',
@@ -38,12 +40,12 @@ const Login = () => {
         const isAdmin = data.user.role?.toLowerCase() === 'admin';
         navigate(isAdmin ? '/admin/dashboard' : '/dashboard');
       } else {
-        alert(data.message || 'Login failed');
+        showToast(data.message || 'Login failed', 'error');
       }
 
     } catch (error) {
       console.error('Error:', error);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     }
   };
 

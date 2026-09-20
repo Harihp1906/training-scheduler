@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/ManageCertificates.css';
 
 const formatDate = (isoString) =>
   new Date(isoString).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 
 const ManageCertificates = () => {
+  const showToast = useToast();
 
   const [certificates, setCertificates] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,7 +47,7 @@ const ManageCertificates = () => {
       setCertificates(certificates.map(c => (c.id === id ? updated : c)));
     } catch (error) {
       console.error('Error revoking certificate:', error);
-      alert('Failed to revoke certificate. Please try again.');
+      showToast('Failed to revoke certificate. Please try again.', 'error');
     }
   };
 

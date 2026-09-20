@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/ManageQuizzes.css';
 
 const emptyQuestion = () => ({ text: '', options: ['', ''], correctIndex: 0 });
@@ -18,6 +19,7 @@ const emptyForm = () => ({
 const TYPE_LABELS = { PRACTICE: 'Practice Quiz', FINAL_EXAM: 'Final Exam' };
 
 const ManageQuizzes = () => {
+  const showToast = useToast();
 
   const [quizzes, setQuizzes] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -82,7 +84,7 @@ const ManageQuizzes = () => {
       setQuizzes(quizzes.filter(q => q.id !== id));
     } catch (error) {
       console.error('Error deleting quiz:', error);
-      alert('Failed to delete quiz. Please try again.');
+      showToast('Failed to delete quiz. Please try again.', 'error');
     }
   };
 
@@ -168,7 +170,7 @@ const ManageQuizzes = () => {
       closeModal();
     } catch (error) {
       console.error('Error saving quiz:', error);
-      alert(error.message || 'Something went wrong. Please try again.');
+      showToast(error.message || 'Something went wrong. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }

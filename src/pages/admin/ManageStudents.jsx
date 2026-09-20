@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/ManageStudents.css';
 
 const ManageStudents = () => {
+  const showToast = useToast();
 
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,7 +44,7 @@ const ManageStudents = () => {
       setStudents(students.map(s => (s.id === student.id ? updated : s)));
     } catch (error) {
       console.error('Error updating student status:', error);
-      alert('Failed to update student status. Please try again.');
+      showToast('Failed to update student status. Please try again.', 'error');
     }
   };
 

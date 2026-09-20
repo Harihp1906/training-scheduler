@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/public/Register.css';
 
 const Register = () => {
   const navigate = useNavigate();
+  const showToast = useToast();
 
   const [formData, setFormData] = useState({
     fullName: '',
@@ -36,15 +38,15 @@ const Register = () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert('Registration successful!');
+        showToast('Registration successful!', 'success');
         navigate('/login');
       } else {
-        alert(data.message || 'Registration failed');
+        showToast(data.message || 'Registration failed', 'error');
       }
 
     } catch (error) {
       console.error('Error:', error);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     }
   };
 

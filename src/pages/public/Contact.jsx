@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { apiFetch } from '../../utils/api';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/public/Contact.css';
 
 const Contact = () => {
+  const showToast = useToast();
 
   const [formData, setFormData] = useState({
     name: '',
@@ -26,13 +28,13 @@ const Contact = () => {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
-      alert(data.message || (response.ok ? 'Message sent successfully!' : 'Something went wrong.'));
+      showToast(data.message || (response.ok ? 'Message sent successfully!' : 'Something went wrong.'), response.ok ? 'success' : 'error');
       if (response.ok) {
         setFormData({ name: '', email: '', subject: '', message: '' });
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      alert('Something went wrong. Please try again.');
+      showToast('Something went wrong. Please try again.', 'error');
     } finally {
       setSubmitting(false);
     }
