@@ -2,6 +2,7 @@ package com.training.trainingscheduler.controller;
 
 import com.training.trainingscheduler.dto.BatchRequest;
 import com.training.trainingscheduler.dto.BatchResponse;
+import com.training.trainingscheduler.dto.BatchRosterResponse;
 import com.training.trainingscheduler.service.BatchService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +38,23 @@ public class BatchController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         batchService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/roster")
+    public BatchRosterResponse getRoster(@PathVariable Long id) {
+        return batchService.getRoster(id);
+    }
+
+    @PostMapping("/{id}/students/{enrollmentId}")
+    public ResponseEntity<Void> assignStudent(@PathVariable Long id, @PathVariable Long enrollmentId) {
+        batchService.assignStudent(id, enrollmentId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/students/{enrollmentId}")
+    public ResponseEntity<Void> removeStudent(@PathVariable Long id, @PathVariable Long enrollmentId) {
+        batchService.removeStudent(id, enrollmentId);
         return ResponseEntity.noContent().build();
     }
 

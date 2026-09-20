@@ -49,3 +49,47 @@
     grid-template-columns: 1fr;
   }
 }
+
+.batch-roster-modal {
+  max-width: 560px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.batch-roster-section {
+  margin-bottom: 20px;
+}
+
+.batch-roster-section h4 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--dark);
+  margin-bottom: 10px;
+}
+
+.batch-roster-empty {
+  font-size: 13px;
+  color: var(--grey);
+  margin-bottom: 8px;
+}
+
+.batch-roster-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+
+.batch-roster-row strong {
+  display: block;
+  font-size: 14px;
+  color: var(--dark);
+}
+
+.batch-roster-email {
+  font-size: 12px;
+  color: var(--grey);
+}

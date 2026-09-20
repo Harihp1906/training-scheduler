@@ -26,6 +26,12 @@ public class Enrollment {
     @JoinColumn(name = "course_id")
     private Course course;
 
+    // Nullable -- an enrollment starts unassigned and an admin opts it into a
+    // batch of the same course later (see BatchService).
+    @ManyToOne
+    @JoinColumn(name = "batch_id")
+    private Batch batch;
+
     @Column(nullable = false)
     private int progress;
 

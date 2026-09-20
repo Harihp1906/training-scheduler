@@ -31,9 +31,4 @@ public class Batch {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    // No student-assignment feature exists anywhere in the app yet -- this
-    // always starts at 0 and nothing currently increments it.
-    @Column(nullable = false)
-    private int students = 0;
-
 }

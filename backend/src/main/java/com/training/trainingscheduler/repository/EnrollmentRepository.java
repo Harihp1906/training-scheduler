@@ -1,5 +1,6 @@
 package com.training.trainingscheduler.repository;
 
+import com.training.trainingscheduler.entity.Batch;
 import com.training.trainingscheduler.entity.Course;
 import com.training.trainingscheduler.entity.Enrollment;
 import com.training.trainingscheduler.entity.EnrollmentStatus;
@@ -22,5 +23,11 @@ public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     long countByStatus(EnrollmentStatus status);
 
     List<Enrollment> findAllByOrderByEnrolledAtDesc();
+
+    long countByBatch(Batch batch);
+
+    List<Enrollment> findByBatch(Batch batch);
+
+    List<Enrollment> findByCourseAndBatchIsNull(Course course);
 
 }

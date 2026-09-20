@@ -18,12 +18,12 @@ public class BatchResponse {
     private LocalDate endDate;
     private String status; // "Upcoming" | "Active" | "Completed" -- derived from today vs. start/end date
 
-    public static BatchResponse from(Batch batch) {
+    public static BatchResponse from(Batch batch, long studentCount) {
         return new BatchResponse(
                 batch.getId(),
                 batch.getName(),
                 batch.getCourse().getTitle(),
-                batch.getStudents(),
+                (int) studentCount,
                 batch.getStartDate(),
                 batch.getEndDate(),
                 computeStatus(batch)

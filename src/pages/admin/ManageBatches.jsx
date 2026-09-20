@@ -1,29 +1,83 @@
 import { useState, useEffect } from 'react';
 import { apiFetch } from '../../utils/api';
 import AdminSidebar from '../../components/admin/AdminSidebar';
+import { useToast } from '../../components/common/Toast.jsx';
 import '../styles/admin/ManageBatches.css';
 
 const ManageBatches = () => {
+  const showToast = useToast();
 
   const [batches, setBatches] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const fetchBatches = () => {
+    return apiFetch('/api/admin/batches').then(res => res.json()).then(setBatches);
+  };
+
   useEffect(() => {
     Promise.all([
-      apiFetch('/api/admin/batches').then(res => res.json()),
-      apiFetch('/api/courses/all').then(res => res.json()),
+      fetchBatches(),
+      apiFetch('/api/courses/all').then(res => res.json()).then(setCourses),
     ])
-      .then(([batchData, courseData]) => {
-        setBatches(batchData);
-        setCourses(courseData);
-        setLoading(false);
-      })
+      .then(() => setLoading(false))
       .catch(err => {
         console.error('Error fetching batches:', err);
         setLoading(false);
       });
   }, []);
+
+  const [rosterBatch, setRosterBatch] = useState(null);
+  const [roster, setRoster] = useState({ assigned: [], eligible: [] });
+  const [rosterLoading, setRosterLoading] = useState(false);
+
+  const fetchRoster = (batchId) => {
+    setRosterLoading(true);
+    apiFetch(`/api/admin/batches/${batchId}/roster`)
+      .then(res => res.json())
+      .then(data => setRoster(data))
+      .catch(err => console.error('Error fetching roster:', err))
+      .finally(() => setRosterLoading(false));
+  };
+
+  const openRoster = (batch) => {
+    setRosterBatch(batch);
+    fetchRoster(batch.id);
+  };
+
+  const handleAssignStudent = async (enrollmentId) => {
+    try {
+      const response = await apiFetch(`/api/admin/batches/${rosterBatch.id}/students/${enrollmentId}`, {
+        method: 'POST',
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Request failed');
+      }
+      fetchRoster(rosterBatch.id);
+      fetchBatches();
+    } catch (error) {
+      console.error('Error assigning student:', error);
+      showToast(error.message || 'Something went wrong. Please try again.', 'error');
+    }
+  };
+
+  const handleRemoveStudent = async (enrollmentId) => {
+    try {
+      const response = await apiFetch(`/api/admin/batches/${rosterBatch.id}/students/${enrollmentId}`, {
+        method: 'DELETE',
+      });
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.message || 'Request failed');
+      }
+      fetchRoster(rosterBatch.id);
+      fetchBatches();
+    } catch (error) {
+      console.error('Error removing student:', error);
+      showToast(error.message || 'Something went wrong. Please try again.', 'error');
+    }
+  };
 
   const [showAddBatch, setShowAddBatch] = useState(false);
   const [newBatch, setNewBatch] = useState({
@@ -65,10 +119,10 @@ const ManageBatches = () => {
 
       setBatches(batches.map(b => (b.id === editingBatchId ? data : b)));
       setEditingBatchId(null);
-      alert('Batch updated successfully!');
+      showToast('Batch updated successfully!', 'success');
     } catch (error) {
       console.error('Error updating batch:', error);
-      alert(error.message || 'Something went wrong. Please try again.');
+      showToast(error.message || 'Something went wrong. Please try again.', 'error');
     }
   };
 
@@ -86,10 +140,10 @@ const ManageBatches = () => {
       setBatches([...batches, data]);
       setShowAddBatch(false);
       setNewBatch({ name: '', courseId: '', startDate: '', endDate: '' });
-      alert('Batch created successfully!');
+      showToast('Batch created successfully!', 'success');
     } catch (error) {
       console.error('Error creating batch:', error);
-      alert(error.message || 'Something went wrong. Please try again.');
+      showToast(error.message || 'Something went wrong. Please try again.', 'error');
     }
   };
 
@@ -101,7 +155,7 @@ const ManageBatches = () => {
       setBatches(batches.filter(b => b.id !== id));
     } catch (error) {
       console.error('Error deleting batch:', error);
-      alert('Failed to delete batch. Please try again.');
+      showToast('Failed to delete batch. Please try again.', 'error');
     }
   };
 
@@ -243,6 +297,56 @@ const ManageBatches = () => {
           </div>
         )}
 
+        {/* Manage Students Modal */}
+        {rosterBatch !== null && (
+          <div className="modal-overlay" onClick={() => setRosterBatch(null)}>
+            <div className="quiz-modal batch-roster-modal" onClick={(e) => e.stopPropagation()}>
+              <div className="modal-header">
+                <h2>Students — {rosterBatch.name}</h2>
+                <button className="modal-close" onClick={() => setRosterBatch(null)}>✕</button>
+              </div>
+
+              {rosterLoading && <p>Loading students...</p>}
+
+              {!rosterLoading && (
+                <>
+                  <div className="batch-roster-section">
+                    <h4>Assigned ({roster.assigned.length})</h4>
+                    {roster.assigned.length === 0 && <p className="batch-roster-empty">No students assigned yet.</p>}
+                    {roster.assigned.map(enrollment => (
+                      <div className="batch-roster-row" key={enrollment.id}>
+                        <div>
+                          <strong>{enrollment.user.fullName}</strong>
+                          <span className="batch-roster-email">{enrollment.user.email}</span>
+                        </div>
+                        <button className="btn-delete" onClick={() => handleRemoveStudent(enrollment.id)}>Remove</button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="batch-roster-section">
+                    <h4>Eligible ({roster.eligible.length})</h4>
+                    <p className="batch-roster-empty">Students enrolled in {rosterBatch.course} but not yet in a batch.</p>
+                    {roster.eligible.map(enrollment => (
+                      <div className="batch-roster-row" key={enrollment.id}>
+                        <div>
+                          <strong>{enrollment.user.fullName}</strong>
+                          <span className="batch-roster-email">{enrollment.user.email}</span>
+                        </div>
+                        <button className="btn-edit" onClick={() => handleAssignStudent(enrollment.id)}>Add</button>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              <div className="modal-actions">
+                <button type="button" className="btn-cancel" onClick={() => setRosterBatch(null)}>Close</button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {loading && <p style={{ padding: '2rem' }}>Loading batches...</p>}
 
         {!loading && (
@@ -299,6 +403,7 @@ const ManageBatches = () => {
                         </td>
                         <td>
                           <div className="action-buttons">
+                            <button className="btn-edit" onClick={() => openRoster(batch)}>👥 Students</button>
                             <button className="btn-edit" onClick={() => handleEditClick(batch)}>✏️ Edit</button>
                             <button className="btn-delete" onClick={() => handleDelete(batch.id)}>🗑️ Delete</button>
                           </div>
